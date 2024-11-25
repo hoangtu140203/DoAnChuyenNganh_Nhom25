@@ -11,12 +11,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
@@ -24,6 +24,7 @@ import org.springframework.session.security.web.authentication.SpringSessionReme
 public class SecurityConfiguration {
 
     private final CustomUserDetailsService userDetailsService;
+    private final CustomSuccessHandler successHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,13 +46,37 @@ public class SecurityConfiguration {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD,
                                 DispatcherType.INCLUDE)
                         .permitAll()
-                        .requestMatchers("/", "/client/**", "/css/**", "/js/**", "/images/**","/login")
+                        .requestMatchers("/", "/client/**", "/css/**", "/js/**", "/images/**", "/login", "/register"
+                                , "/error/**","/session-expired")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .authenticationProvider(authProvider());
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .successHandler(successHandler)
+                        .failureUrl("/login?error")
+                        .permitAll())
+
+                .logout(logout -> logout
+                        .deleteCookies("JSESSIONID").invalidateHttpSession(true)
+                        .logoutSuccessUrl("/")
+                )
+                .rememberMe(remember -> remember
+                        .key("uniqueAndSecret")
+                        .tokenValiditySeconds(24 * 60 * 60)
+                )
+                .authenticationProvider(authProvider())
+                .sessionManagement((sessionManagement) -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .invalidSessionUrl("/logout?expired")
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false)
+                        .expiredUrl("/session-expired")
+                );
         return http.build();
     }
+
+
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
@@ -59,6 +84,7 @@ public class SecurityConfiguration {
             response.sendRedirect("/");
         };
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

@@ -1,6 +1,7 @@
 package com.gr25.thinkpro.service;
 
 import com.gr25.thinkpro.domain.entity.Customer;
+import com.gr25.thinkpro.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -15,19 +16,19 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
+    private final CustomerRepository customerRepository;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Customer customer = userService.getCustomerByEmail(username);
+        Customer customer = customerRepository.findByEmail(username);
         if (customer == null) {
             throw new UsernameNotFoundException("user not found");
         }
         return new User(
                 customer.getEmail(),
                 customer.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + customer.getRole().getRoleName())));
+                Collections.singletonList(new SimpleGrantedAuthority( customer.getRole().getRoleName())));
     }
 
 }

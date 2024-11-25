@@ -18,6 +18,8 @@ public class Cart {
     @Column(name="cart_id")
     private long cartId;
 
+    private int sum;
+
     @OneToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
