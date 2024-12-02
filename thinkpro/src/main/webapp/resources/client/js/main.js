@@ -43,6 +43,7 @@
         return false;
     });
 
+    $(".tb-cn").fadeIn().delay(3000).fadeOut("slow");
 
 
 

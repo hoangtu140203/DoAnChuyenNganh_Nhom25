@@ -7,12 +7,16 @@ import com.gr25.thinkpro.repository.CartRepository;
 import com.gr25.thinkpro.repository.CustomerRepository;
 import com.gr25.thinkpro.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,35 @@ public class CustomerService {
 
     public Customer getCustomerByEmail(String email) {
         return customerRepository.findByEmail(email);
+    }
+
+    public List<Customer> getCustomers() {
+        return customerRepository.findAll();
+    }
+
+    public Customer getCustomerById(long id) {
+        return customerRepository.findCustomerByCustomerId(id);
+    }
+
+    public void deleteCustomerById(long id) {
+        this.cartRepository.deleteByCustomerId(id);
+        this.customerRepository.deleteCustomerByCustomerId(id);
+    }
+
+    public Customer getCurrentCustomer() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            return this.customerRepository.findByEmail(email);
+        }
+        else {
+            return null;
+        }
+    }
+
+    public Customer saveCustomer(Customer customer) {
+        return this.customerRepository.save(customer);
     }
 
     public boolean existByEmail(String email) {
