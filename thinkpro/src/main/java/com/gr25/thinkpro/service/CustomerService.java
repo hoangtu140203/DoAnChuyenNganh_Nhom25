@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -71,7 +70,7 @@ public class CustomerService {
         Customer customer = new Customer();
         customer.setEmail(requestDto.getEmail());
         customer.setPhone(requestDto.getPhone());
-
+        customer.setName(requestDto.getName());
         customer.setRole(roleRepository.findByRoleName("ROLE_USER"));
         customer.setCreatedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
         customer.setLastModifiedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
