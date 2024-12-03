@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,6 +27,10 @@ public class FeedBack extends DateAuditing implements Serializable {
     private int rate;
 
     private String createBy;
+
+    public Date getCreateDate() {
+        return java.util.Date.from(super.getCreatedDate().atZone(ZoneId.systemDefault()).toInstant());
+    }
 
     @ManyToOne
     @JoinColumn(name = "product_id")

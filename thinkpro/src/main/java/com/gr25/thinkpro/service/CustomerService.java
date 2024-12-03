@@ -71,6 +71,7 @@ public class CustomerService {
         Customer customer = new Customer();
         customer.setEmail(requestDto.getEmail());
         customer.setPhone(requestDto.getPhone());
+
         customer.setRole(roleRepository.findByRoleName("ROLE_USER"));
         customer.setCreatedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
         customer.setLastModifiedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));

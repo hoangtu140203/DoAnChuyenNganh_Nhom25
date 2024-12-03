@@ -1,5 +1,8 @@
 package com.gr25.thinkpro.service;
 
+import com.gr25.thinkpro.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import com.gr25.thinkpro.domain.dto.request.RegisterRequestDto;
 import com.gr25.thinkpro.domain.entity.Cart;
 import com.gr25.thinkpro.domain.entity.Category;
@@ -24,6 +27,12 @@ public class CategoryService {
     private final RoleRepository roleRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+
+
+    public List<Category>findAll(){
+        return categoryRepository.findAll();
+    }
+   
 
     public List<Category> getCategories() {
         return categoryRepository.findAll();
