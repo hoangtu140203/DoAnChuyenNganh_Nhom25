@@ -3,16 +3,14 @@ package com.gr25.thinkpro.service;
 
 import com.gr25.thinkpro.domain.dto.request.ProductCriteriaDto;
 import com.gr25.thinkpro.domain.entity.Product;
-import com.gr25.thinkpro.repository.ProductRepository;
+import com.gr25.thinkpro.repository.*;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.util.ArrayList;
@@ -22,11 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService  {
     private final ProductRepository productRepository;
-    private final CustomerRepository customerRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final CartRepository cartRepository;
-    private final RoleRepository roleRepository;
-    private final CategoryRepository categoryRepository;
+
     public Page<Product> findProduct(ProductCriteriaDto productCriteriaDto,Pageable pageable) {
 
 
