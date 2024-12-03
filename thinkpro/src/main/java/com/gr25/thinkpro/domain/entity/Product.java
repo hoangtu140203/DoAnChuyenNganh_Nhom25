@@ -47,7 +47,7 @@ public class Product extends DateAuditing implements Serializable {
     List<Image> images;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id",nullable = true)
     private Category category;
 
     @OneToMany(mappedBy = "product")

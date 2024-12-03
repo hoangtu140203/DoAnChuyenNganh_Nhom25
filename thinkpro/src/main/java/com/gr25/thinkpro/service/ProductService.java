@@ -1,5 +1,6 @@
 package com.gr25.thinkpro.service;
 
+
 import com.gr25.thinkpro.domain.dto.request.ProductCriteriaDto;
 import com.gr25.thinkpro.domain.entity.Product;
 import com.gr25.thinkpro.repository.ProductRepository;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService  {
     private final ProductRepository productRepository;
+    private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final CartRepository cartRepository;
+    private final RoleRepository roleRepository;
+    private final CategoryRepository categoryRepository;
     public Page<Product> findProduct(ProductCriteriaDto productCriteriaDto,Pageable pageable) {
 
 
@@ -66,6 +74,35 @@ public class ProductService  {
     }
     public Product findProductById(Long id) {
         return productRepository.findByProductId(id).orElse(null);
+    }
+
+    public List<Product> getProducts() {
+        return productRepository.findAll();
+    }
+    public Product getProductById(long id) {
+        return productRepository.findProductByProductId(id);
+    }
+    public void rqProduct(Product product, RedirectAttributes redirectAttributes) {
+
+        if(product.getName() == null || product.getName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorName", "Tên không được để trống");
+        }
+        if(product.getQuantity()<=0){
+            redirectAttributes.addFlashAttribute("errorQuantity", "Số lượng sản phẩm phải lớn hơn không");
+        }
+        if(product.getPrice()<=0 ){
+            redirectAttributes.addFlashAttribute("errorPrice", "Giá sản phẩm phải lớn hơn không");
+        }
+        if (product.getDiscount()<=0){
+            redirectAttributes.addFlashAttribute("errorDiscount", "Giảm giá sản phẩm phải lớn hơn không");
+        }
+
+    }
+    public boolean existsProductByName(String name) {
+        return productRepository.existsByName(name);
+    }
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
     }
 
 }

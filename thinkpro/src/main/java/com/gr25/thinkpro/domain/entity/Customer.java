@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class Customer extends DateAuditing implements Serializable {
 
     private String phone;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dob;
 
     @ManyToOne

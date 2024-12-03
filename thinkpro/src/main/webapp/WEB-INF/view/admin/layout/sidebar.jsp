@@ -15,6 +15,11 @@
                     Khách hàng
                 </a>
 
+                <a class="nav-link" href="/admin/category">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    Danh mục
+                </a>
+
                 <a class="nav-link" href="/admin/product">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Sản phẩm

@@ -1,26 +1,50 @@
 package com.gr25.thinkpro.controller.client;
 
-import com.gr25.thinkpro.domain.dto.request.RegisterRequestDto;
-import com.gr25.thinkpro.repository.CustomerRepository;
-import com.gr25.thinkpro.repository.RoleRepository;
+import com.gr25.thinkpro.domain.entity.Customer;
 import com.gr25.thinkpro.service.CustomerService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class AdminPageController {
-
+public class  AdminPageController {
+    private final CustomerService customerService;
 
     @GetMapping("/admin/user")
-    public String getAdminPage(Model model) {
+    public String getAdminUserPage(Model model) {
+        List<Customer> users = this.customerService.getCustomers();
+        model.addAttribute("users",users);
         return "admin/user/show";
     }
+
+    @GetMapping("/admin/user/{Id}")
+    public String getAdminUserViewPage(Model model, @PathVariable("Id") Long id) {
+        Customer customer = this.customerService.getCustomerById(id);
+        model.addAttribute("userview",customer);
+        return "admin/user/detail";
+    }
+
+    @GetMapping("/admin/user/delete/{Id}")
+    public String getdeleteAdminUserPage(Model model,@PathVariable("Id") Long id) {
+        model.addAttribute("id",id);
+        model.addAttribute("newUser",new Customer());
+        return "admin/user/delete";
+    }
+
+
+    @PostMapping("/admin/user/delete")
+    @Transactional
+    public String deleteAdminUserPage(Model model, @ModelAttribute("newUser") Customer customer) {
+
+        this.customerService.deleteCustomerById(customer.getCustomerId());
+        return "redirect:/admin/user";
+    }
+
+
 }

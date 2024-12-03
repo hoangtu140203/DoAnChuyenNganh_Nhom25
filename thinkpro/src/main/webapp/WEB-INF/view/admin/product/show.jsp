@@ -21,37 +21,41 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Quản lý khách hàng</h1>
+                <h1 class="mt-4">Quản lý sản phẩm</h1>
                 <div class="mt-5">
                     <div class="row">
                         <div class="col-12 mx-auto">
                             <div class="d-flex justify-content-between">
-                                <h3>Bảng khách hàng</h3>
-
+                                <h3>Bảng sản phẩm</h3>
+                                <a href="/admin/product/create" class="btn btn-primary">Thêm sản phẩm</a>
                             </div>
                             <hr />
                             <table class=" table table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Email</th>
                                     <th>Tên</th>
-                                    <th>Vai trò</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
                                     <th>Hành động</th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach var="user" items="${users}">
+                                <c:forEach var="product" items="${products}">
 
                                     <tr>
-                                        <th>${user.customerId}</th>
-                                        <td>${user.email}</td>
-                                        <td>${user.name}</td>
-                                        <td>${user.role.roleName}</td>
+                                        <th>${product.productId}</th>
+
+                                        <td>${product.name}</td>
+                                        <td>${product.price}</td>
+                                        <td>${product.quantity}</td>
                                         <td style="display: flex">
-                                            <a href="/admin/user/${user.customerId}"
+                                            <a href="/admin/product/${product.productId}"
                                                class="btn btn-success me-2">Xem</a>
-                                            <a href="/admin/user/delete/${user.customerId}"
+                                            <a href="/admin/product/update/${product.productId}"
+                                               class="btn btn-warning me-2">Cập nhật</a>
+                                            <a href="/admin/product/delete/${product.productId}"
                                                class="btn btn-danger">Xóa</a>
                                         </td>
                                     </tr>

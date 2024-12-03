@@ -21,37 +21,37 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Quản lý khách hàng</h1>
+                <h1 class="mt-4">Quản lý danh mục</h1>
                 <div class="mt-5">
                     <div class="row">
                         <div class="col-12 mx-auto">
                             <div class="d-flex justify-content-between">
-                                <h3>Bảng khách hàng</h3>
-
+                                <h3>Bảng danh mục</h3>
+                                <a href="/admin/category/create" class="btn btn-primary">Thêm danh mục</a>
                             </div>
                             <hr />
                             <table class=" table table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Email</th>
+
                                     <th>Tên</th>
-                                    <th>Vai trò</th>
                                     <th>Hành động</th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach var="user" items="${users}">
+                                <c:forEach var="cate" items="${cates}">
 
                                     <tr>
-                                        <th>${user.customerId}</th>
-                                        <td>${user.email}</td>
-                                        <td>${user.name}</td>
-                                        <td>${user.role.roleName}</td>
+                                        <th>${cate.categoryId}</th>
+
+                                        <td>${cate.name}</td>
+
                                         <td style="display: flex">
-                                            <a href="/admin/user/${user.customerId}"
-                                               class="btn btn-success me-2">Xem</a>
-                                            <a href="/admin/user/delete/${user.customerId}"
+                                            <a href="/admin/category/update/${cate.categoryId}"
+                                               class="btn btn-warning me-2">Cập nhật</a>
+                                            <a href="/admin/category/delete/${cate.categoryId}"
                                                class="btn btn-danger">Xóa</a>
                                         </td>
                                     </tr>

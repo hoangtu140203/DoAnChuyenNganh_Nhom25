@@ -1,3 +1,7 @@
+<%@ page import="org.springframework.security.core.Authentication" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="com.gr25.thinkpro.service.CustomUserDetailsService" %>
+<%@ page import="com.gr25.thinkpro.domain.entity.Customer" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -9,7 +13,18 @@
     <!-- Navbar Search-->
     <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
                 <span style="color: white;">Welcome,
-                    <%=request.getUserPrincipal().getName().toString()%>
+                    <%
+                        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                        String userName = "";
+                        if (auth != null) {
+                            // Lấy người dùng hiện tại
+                            Object principal = auth.getPrincipal();
+                            if (principal instanceof Customer) {
+                                Customer customer = (Customer) principal; // Giả định đây là đối tượng Customer
+                                userName = customer.getName(); // Đảm bảo bạn có phương thức getName() trong Customer
+                            }
+                        }
+                    %>
 
                 </span>
         <!-- <div class="input-group">
