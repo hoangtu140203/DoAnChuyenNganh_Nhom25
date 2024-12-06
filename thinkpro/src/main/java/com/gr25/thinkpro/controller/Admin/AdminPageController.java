@@ -1,4 +1,4 @@
-package com.gr25.thinkpro.controller.client;
+package com.gr25.thinkpro.controller.Admin;
 
 import com.gr25.thinkpro.domain.entity.Customer;
 import com.gr25.thinkpro.service.CustomerService;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 

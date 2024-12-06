@@ -13175,3 +13175,84 @@ body {
     font-size: 0.75rem;
     border-radius: 0.375rem !important;
 }
+
+
+.material-icons-outlined2 {
+    vertical-align: middle;
+    line-height: 1px;
+}
+
+.text-primary2 {
+    color: #666666;
+}
+
+.text-blue2 {
+    color: #246dec;
+}
+
+.text-red2 {
+    color: #cc3c43;
+}
+
+.text-green2 {
+    color: #367952;
+}
+
+
+.font-weight-bold2 {
+    font-weight: 600;
+}
+
+.card2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 25px;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    border: 1px solid #d2d2d3;
+    border-radius: 5px;
+    box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+}
+
+.card2:first-child {
+    border-left: 7px solid #246dec;
+}
+
+.card2:nth-child(2) {
+    border-left: 7px solid #f5b74f;
+}
+
+.card2:nth-child(3) {
+    border-left: 7px solid #367952;
+}
+
+.card2:nth-child(4) {
+    border-left: 7px solid #cc3c43;
+}
+
+.card2 > span {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.card2-inner2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card2-inner2 > p {
+    font-size: 18px;
+}
+
+.card2-inner2 > span {
+    font-size: 35px;
+}
+
+
+.icon-large {
+    font-size: 4rem; /* Makes the icon larger */
+    margin-left: 1rem; /* Adds space between the text and the icon */
+    align-self: center; /* Ensures vertical alignment */
+}
