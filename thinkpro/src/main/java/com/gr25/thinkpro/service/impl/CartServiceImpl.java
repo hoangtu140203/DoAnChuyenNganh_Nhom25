@@ -56,9 +56,13 @@ public class CartServiceImpl implements CartService {
                     CartDetail cd = new CartDetail();
                     cd.setCart(cart);
                     cd.setProduct(realProduct);
+<<<<<<< HEAD
                     if(quantity >= 0 && quantity <= realProduct.getQuantity()) {
                         cd.setQuantity(quantity);
                     }
+=======
+                    cd.setQuantity(quantity);
+>>>>>>> main
                     cd.setCreatedDate(LocalDateTime.now());
                     cd.setLastModifiedDate(LocalDateTime.now());
                     cartDetailRepository.save(cd);
@@ -69,12 +73,16 @@ public class CartServiceImpl implements CartService {
                     cartRepository.save(cart);
                     session.setAttribute("sum", s);
                 } else {
+<<<<<<< HEAD
                     if(oldDetail.getQuantity() + quantity <= realProduct.getQuantity()) {
                         oldDetail.setQuantity(oldDetail.getQuantity() + quantity);
                     }
                     else {
 
                     }
+=======
+                    oldDetail.setQuantity(oldDetail.getQuantity() + quantity);
+>>>>>>> main
                     cartDetailRepository.save(oldDetail);
                 }
 

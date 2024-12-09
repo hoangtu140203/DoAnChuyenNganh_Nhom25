@@ -32,11 +32,14 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
     }
 
+<<<<<<< HEAD
     @Override
     public List<Bill> fetchOrderByUser(Customer currentUser) {
         return billRepository.findByCustomer(currentUser);
     }
 
+=======
+>>>>>>> main
     public void handlePlaceOrder(
             Customer user, HttpSession session,
             String receiverName, String receiverAddress, String receiverPhone) {
