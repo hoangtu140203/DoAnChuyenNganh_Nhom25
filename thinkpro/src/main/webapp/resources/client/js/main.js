@@ -327,7 +327,7 @@
 
     //////////////////////////
     //handle add to cart with ajax
-    $('.btnAddToCartHomepage').click(function (event) {
+    $('.btnAddToCartDefault').click(function (event) {
         event.preventDefault();
 
         if (!isLogin()) {
@@ -370,7 +370,6 @@
                 alert("có lỗi xảy ra, check code đi ba :v")
                 console.log("error: ", response);
             }
-
         });
     });
 
