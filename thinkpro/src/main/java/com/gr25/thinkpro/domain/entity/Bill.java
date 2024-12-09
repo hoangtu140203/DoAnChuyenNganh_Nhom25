@@ -38,4 +38,10 @@ public class Bill extends DateAuditing implements Serializable {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
+
+    private String receiverName;
+
+    private String receiverAddress;
+
+    private String receiverPhone;
 }

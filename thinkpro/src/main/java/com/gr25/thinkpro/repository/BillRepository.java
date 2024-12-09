@@ -1,6 +1,7 @@
 package com.gr25.thinkpro.repository;
 
 import com.gr25.thinkpro.domain.entity.Bill;
+import com.gr25.thinkpro.domain.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -80,4 +81,6 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
 
     @Query("SELECT COUNT(b) FROM Bill b WHERE FUNCTION('DATE', b.createdDate) = :date")
     int countBillsByDate(LocalDate date);
+
+    List<Bill> findByCustomer(Customer currentUser);
 }

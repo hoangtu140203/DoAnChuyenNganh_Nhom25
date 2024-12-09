@@ -20,7 +20,7 @@ public class Cart {
 
     private int sum;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
