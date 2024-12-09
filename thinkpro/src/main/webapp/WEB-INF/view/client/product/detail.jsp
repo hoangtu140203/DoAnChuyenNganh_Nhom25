@@ -152,6 +152,11 @@
                                 </button>
                             </div>
                         </div>
+                        <c:if test="${not empty errorQuantity}">
+                            <div class="mt-1 text-danger align-content-center">
+                                <span class="">${errorQuantity}</span>
+                            </div>
+                        </c:if>
                         <!-- <form action="/add-product-from-view-detail" method="post"
                             modelAttribute="product"> -->
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

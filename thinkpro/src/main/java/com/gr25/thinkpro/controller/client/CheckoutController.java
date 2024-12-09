@@ -1,9 +1,13 @@
 package com.gr25.thinkpro.controller.client;
 
+<<<<<<< HEAD
+import com.gr25.thinkpro.domain.entity.*;
+=======
 import com.gr25.thinkpro.domain.entity.Cart;
 import com.gr25.thinkpro.domain.entity.CartDetail;
 import com.gr25.thinkpro.domain.entity.Customer;
 import com.gr25.thinkpro.domain.entity.Product;
+>>>>>>> main
 import com.gr25.thinkpro.service.CartService;
 import com.gr25.thinkpro.service.CheckoutService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,4 +79,20 @@ public class CheckoutController {
 
         return "client/cart/thanks";
     }
+<<<<<<< HEAD
+
+    @GetMapping("/order-history")
+    public String getOrderHistoryPage(Model model, HttpServletRequest request) {
+        Customer currentUser = new Customer();// null
+        HttpSession session = request.getSession(false);
+        long id = (long) session.getAttribute("id");
+        currentUser.setCustomerId(id);
+
+        List<Bill> orders = checkoutService.fetchOrderByUser(currentUser);
+        model.addAttribute("orders", orders);
+
+        return "client/cart/order-history";
+    }
+=======
+>>>>>>> main
 }

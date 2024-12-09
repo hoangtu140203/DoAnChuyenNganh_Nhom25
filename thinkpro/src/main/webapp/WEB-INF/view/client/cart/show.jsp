@@ -122,6 +122,14 @@
                                                             </button>
                                                         </div>
                                                     </div>
+<<<<<<< HEAD
+<%--                                                    <c:if test="${not empty errorQuantity}">--%>
+<%--                                                        <div class="mt-1 text-danger align-content-center">--%>
+<%--                                                            <span class="">${errorQuantity}</span>--%>
+<%--                                                        </div>--%>
+<%--                                                    </c:if>--%>
+=======
+>>>>>>> main
                                                 </td>
                                                 <td>
                                                     <p class="mb-0 mt-4" data-cart-detail-id="${cartDetail.id}">

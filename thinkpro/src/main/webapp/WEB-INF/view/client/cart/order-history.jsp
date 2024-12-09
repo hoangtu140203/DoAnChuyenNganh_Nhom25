@@ -83,11 +83,27 @@
                                         <tr>
                                             <td colspan="2">Order Id = ${order.billId}</td>
                                             <td colspan="1">
+<<<<<<< HEAD
+                                                <fmt:formatNumber type="number" value= "${order.total}" />
+=======
                                                 <fmt:formatNumber type="number" value=" ${order.totalPrice}" />
+>>>>>>> main
                                                 đ
                                             </td>
                                             <td colspan="2"></td>
                                             <td colspan="1">
+<<<<<<< HEAD
+                                                <c:if test="${order.status == 'PENDING'}">
+                                                    PENDING
+                                                </c:if>
+                                            </td>
+                                        </tr>
+                                        <c:forEach var="orderDetail" items="${order.billDetails}">
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="/images/products/${orderDetail.product.images[0].url}"
+=======
                                                 ${order.status}
                                             </td>
                                         </tr>
@@ -96,6 +112,7 @@
                                                 <th scope="row">
                                                     <div class="d-flex align-items-center">
                                                         <img src="/images/product/${orderDetail.product.image}"
+>>>>>>> main
                                                             class="img-fluid me-5 rounded-circle"
                                                             style="width: 80px; height: 80px;" alt="">
                                                     </div>
