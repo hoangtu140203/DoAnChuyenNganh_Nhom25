@@ -78,6 +78,14 @@
         .search-filter .form-group {
             margin-bottom: 20px;
         }
+
+        .abovepage {
+            position: fixed; /* Stays fixed as the page scrolls */
+            bottom: 80px; /* Places it above the "Back to Top" button */
+            right: 20px; /* Aligns it to the right */
+            z-index: 1050; /* Ensures it appears above other elements, including "Back to Top" */
+            padding: 10px; /* Adds padding inside the widget */
+        }
     </style>
 </head>
 <body>
@@ -211,7 +219,9 @@
         </c:if>
     </div>
 </div>
-
+<div class="abovepage">
+    <jsp:include page="../layout/chatbotWidget.jsp"/>
+</div>
 <jsp:include page="../layout/footer.jsp"/>
 
 <!-- Back to Top -->

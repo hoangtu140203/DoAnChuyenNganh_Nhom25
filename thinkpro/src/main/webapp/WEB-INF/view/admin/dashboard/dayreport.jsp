@@ -147,6 +147,10 @@
                         </div>
                     </div>
                 </div>
+                <div>
+                    <h1>Export PDF</h1>
+                    <button onclick="downloadPdfDay('${date}')">Download PDF</button>
+                </div>
             </div>
         </main>
         <jsp:include page="../layout/footer.jsp" />
@@ -242,7 +246,43 @@
         loadDataDate('${date}',"DESC");
     });
 </script>
+<script>
+    async function downloadPdfDay(date) {
+        try {
+            const urlday = '/admin/day/export/' + date;
+            const response = await fetch(urlday, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            });
 
+            if (!response.ok) {
+                throw new Error('Failed to download PDF');
+            }
+
+            // Convert the response to a Blob
+            const blob = await response.blob();
+
+            // Create a temporary URL for the Blob
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a temporary link element
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'products.pdf'; // Set the filename
+            document.body.appendChild(a);
+            a.click(); // Trigger the download
+            a.remove(); // Remove the link from the DOM
+
+            // Revoke the temporary URL
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading the PDF:', error);
+            alert('Failed to download the PDF.');
+        }
+    }
+</script>
 
 
 
