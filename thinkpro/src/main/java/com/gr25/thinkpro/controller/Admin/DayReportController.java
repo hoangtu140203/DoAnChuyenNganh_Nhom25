@@ -3,6 +3,7 @@ package com.gr25.thinkpro.controller.Admin;
 import com.gr25.thinkpro.domain.dto.request.ProductDTO;
 import com.gr25.thinkpro.service.DashBoardService;
 import com.gr25.thinkpro.service.DayReportService;
+import com.gr25.thinkpro.service.ExportService;
 import com.gr25.thinkpro.service.MonthReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,9 @@ public class DayReportController {
 
     @Autowired
     private DashBoardService dashBoardService;
+
+    @Autowired
+    private ExportService exportService;
 
     @GetMapping("/{date}")
     public String getDashBoardMonthPage(Model model, @PathVariable("date") String date) {
@@ -43,5 +47,12 @@ public class DayReportController {
             throw new IllegalArgumentException("Invalid orderBy value: " + orderBy);
         }
         return dayReportService.getProductsWithSalesByDates(date, orderBy);
+    }
+
+
+    @GetMapping("/export/{date}")
+    @ResponseBody
+    public byte[] exportDayReport(@PathVariable String date) throws Exception {
+        return exportService.exportDayReport(date);
     }
 }

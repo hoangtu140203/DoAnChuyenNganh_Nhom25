@@ -72,7 +72,7 @@
                                             <th class="title-width1">Hình ảnh</th>
                                             <td>
                                                 <c:forEach items="${product.images}" var="image">
-                                                <span>${image.url}</span><br />
+                                                    <img src="/images/products/${image.url}" alt="Product Image" style="width: 100px; height: auto;"/><br />
                                                 </c:forEach>
                                             </td>
                                         </tr>

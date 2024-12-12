@@ -19,7 +19,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final BillRepository billRepository;
-    private final BillDetalRepository billDetalRepository;
+    private final BillDetailRepository billDetailRepository;
 
     public void handleUpdateCartBeforeCheckout(List<CartDetail> cartDetails) {
         for (CartDetail cartDetail : cartDetails) {
@@ -79,7 +79,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                     orderDetail.setQuantity(cd.getQuantity());
                     orderDetail.setCreatedDate(LocalDateTime.now());
                     orderDetail.setLastModifiedDate(LocalDateTime.now());
-                    billDetalRepository.save(orderDetail);
+                    billDetailRepository.save(orderDetail);
                 }
 
                 // step 2: delete cart_detail and cart

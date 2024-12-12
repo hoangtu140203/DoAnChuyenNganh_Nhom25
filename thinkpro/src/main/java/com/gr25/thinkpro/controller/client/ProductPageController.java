@@ -2,9 +2,11 @@ package com.gr25.thinkpro.controller.client;
 
 import com.gr25.thinkpro.domain.entity.Category;
 import com.gr25.thinkpro.domain.entity.Customer;
+import com.gr25.thinkpro.domain.entity.Image;
 import com.gr25.thinkpro.domain.entity.Product;
 import com.gr25.thinkpro.service.CategoryService;
 import com.gr25.thinkpro.service.CustomerService;
+import com.gr25.thinkpro.service.ImageService;
 import com.gr25.thinkpro.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,8 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +28,7 @@ import java.util.Objects;
 public class ProductPageController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final ImageService imageService;
 
     @GetMapping("/admin/product")
     public String getProductPage(Model model) {
@@ -42,20 +47,25 @@ public class ProductPageController {
     @GetMapping("/admin/product/create")
     public String getcreateProductPage(Model model) {
         Product product = new Product();
-        product.setCategory(new Category());
+
+        List<Image> images = new ArrayList<>();
+
+        List<Category> categories = this.categoryService.getCategories();
+        model.addAttribute("categories", categories);
         model.addAttribute("newProduct", product);
+        model.addAttribute("images", images);
         return "admin/product/create";
     }
 
+
     @PostMapping("/admin/product/create")
-    public String createProduct(Model model,@ModelAttribute("newProduct") Product product,RedirectAttributes redirectAttributes) {
+    public String createProduct(Model model,@ModelAttribute("newProduct") Product product,
+                                @RequestParam("imageFiles") List<Image> images,RedirectAttributes redirectAttributes) {
 
-        String categoryName = product.getCategory().getName();
+        Category categoryName = categoryService.getCategoryByName(product.getCategory().getName());
+
         List<Category> categories = this.categoryService.getCategories();
-        if(categoryName==null) {
-            redirectAttributes.addFlashAttribute("errorCate", "Danh mục không được để trống");
-        }
-
+        model.addAttribute("categories", categories);
 
         this.productService.rqProduct(product,redirectAttributes);
         if (    redirectAttributes.containsAttribute("errorName") ||
@@ -65,17 +75,37 @@ public class ProductPageController {
                 redirectAttributes.containsAttribute("errorDiscount")) {
             return "redirect:/admin/product/create";
         }
+        product.setCreatedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
+        product.setLastModifiedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
+        product.setCategory(categoryName);
+        productService.saveProduct(product);
 
-        for(Category c : categories){
-            if(c.getName().equals(categoryName)){
-                product.setCreatedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
-                product.setLastModifiedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
-                product.setCategory(c);
-                this.productService.saveProduct(product);
-                return "redirect:/admin/product";
-            }
+
+
+        for (Image image : images) {
+
+            imageService.saveImage(image);
         }
-        redirectAttributes.addFlashAttribute("errorCate", "Danh mục không tồn tại");
-        return "redirect:/admin/product/create";
+
+
+
+
+
+
+        return "redirect:/admin/product";
     }
+    @GetMapping("/admin/product/delete/{id}")
+    public String getdeleteProductPage(Model model, @PathVariable("id") long id) {
+        model.addAttribute("id", id);
+        model.addAttribute("newProduct", new Product());
+        return "admin/product/delete";
+    }
+
+    @Transactional
+    @PostMapping("/admin/product/delete")
+    public String postdeleteProductPage(Model model,@ModelAttribute("newProduct") Product product) {
+        this.productService.deleteProduct(product.getProductId());
+        return "redirect:/admin/product";
+    }
+
 }

@@ -130,7 +130,7 @@
                                     Thống kê doanh thu
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-success" onclick="fetchRevenue('2024-11-01');">Ngày</button>
+                                    <button class="btn btn-success" onclick="fetchRevenue('${date}');">Ngày</button>
                                     <button class="btn btn-warning" onclick="fetchRevenue(null, '2024');">Tháng</button>
                                 </div>
                             </div>
@@ -170,6 +170,10 @@
                             <tbody></tbody>
                         </table>
                     </div>
+                </div>
+                <div>
+                    <h1>Export PDF</h1>
+                    <button onclick="downloadPdf()">Download PDF</button>
                 </div>
             </div>
         </main>
@@ -335,7 +339,7 @@
 
     // Load default data on page load
     document.addEventListener("DOMContentLoaded", () => {
-        fetchRevenue('2024-11-01'); // Call the function with the default start date
+        fetchRevenue('${date}'); // Call the function with the default start date
     });
 </script>
 
@@ -453,6 +457,42 @@
     });
 </script>
 
+<script>
+    async function downloadPdf() {
+        try {
+            const response = await fetch('/admin/export', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to download PDF');
+            }
+
+            // Convert the response to a Blob
+            const blob = await response.blob();
+
+            // Create a temporary URL for the Blob
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a temporary link element
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'products.pdf'; // Set the filename
+            document.body.appendChild(a);
+            a.click(); // Trigger the download
+            a.remove(); // Remove the link from the DOM
+
+            // Revoke the temporary URL
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading the PDF:', error);
+            alert('Failed to download the PDF.');
+        }
+    }
+</script>
 
 </body>
 
