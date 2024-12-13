@@ -218,10 +218,11 @@
             </div>
         </c:if>
     </div>
+    <div>
+        <jsp:include page="../layout/chatbotWidget.jsp"/>
+    </div>
 </div>
-<div class="abovepage">
-    <jsp:include page="../layout/chatbotWidget.jsp"/>
-</div>
+
 <jsp:include page="../layout/footer.jsp"/>
 
 <!-- Back to Top -->
