@@ -2,6 +2,7 @@ package com.gr25.thinkpro.controller.Admin;
 
 import com.gr25.thinkpro.domain.dto.request.ProductDTO;
 import com.gr25.thinkpro.service.DashBoardService;
+import com.gr25.thinkpro.service.ExportService;
 import com.gr25.thinkpro.service.MonthReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,10 @@ public class MonthReportController {
     @Autowired
     private DashBoardService dashBoardService;
 
+
+    @Autowired
+    private ExportService exportService;
+
     @GetMapping("/{month}/{year}")
     public String getDashBoardMonthPage(Model model, @PathVariable("month") int month, @PathVariable("year") int year) {
         model.addAttribute("totalProduct", monthReportService.getTotalProductByMonth(month, year));
@@ -31,6 +36,7 @@ public class MonthReportController {
         model.addAttribute("pieChartData", monthReportService.getPieChartDataMonth(month, year));
         model.addAttribute("month", month);
         model.addAttribute("year", year);
+        model.addAttribute("date", LocalDate.of(year, month, 1));
         System.out.println(model.getAttribute("pieChartData"));
         return "admin/dashboard/monthreport";
     }
@@ -42,5 +48,12 @@ public class MonthReportController {
             throw new IllegalArgumentException("Invalid orderBy value: " + orderBy);
         }
         return monthReportService.getProductsWithSalesByMonth(month, year, orderBy);
+    }
+
+
+    @GetMapping("/export/{month}/{year}")
+    @ResponseBody
+    public byte[] exportMonthReport(@PathVariable int month, @PathVariable int year) throws Exception {
+        return exportService.exportMonthReport(month, year);
     }
 }

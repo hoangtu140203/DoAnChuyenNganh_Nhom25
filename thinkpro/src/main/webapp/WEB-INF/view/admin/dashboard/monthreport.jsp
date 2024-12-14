@@ -115,6 +115,19 @@
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-chart-area me-1"></i>
+                                    Thống kê doanh thu
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="chart-areamonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-chart-bar me-1"></i>
                                 Thị phần các nhãn hàng
@@ -124,28 +137,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-6">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
-                                Top sản phẩm
-                            </div>
-                            <div class="card-body">
-                                <table id="datatablemonth">
-                                    <thead>
-                                    <tr>
-                                        <th>Mã sản pẩm</th>
-                                        <th>Tên</th>
-                                        <th>Nhà sản xuất</th>
-                                        <th>Giá</th>
-                                        <th>Doanh số</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-table me-1"></i>
+                            Top sản phẩm
+                        </div>
+                        <div class="card-body">
+                            <table id="datatablemonth">
+                                <thead>
+                                <tr>
+                                    <th>Mã sản pẩm</th>
+                                    <th>Tên</th>
+                                    <th>Nhà sản xuất</th>
+                                    <th>Giá</th>
+                                    <th>Doanh số</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <h1>Export PDF</h1>
+                    <button onclick="downloadPdfMonth(${month},${year})">Download PDF</button>
                 </div>
             </div>
         </main>
@@ -242,8 +257,147 @@
         loadDataMonth(${month},${year},"DESC");
     });
 </script>
+<script>
+    async function downloadPdfMonth(month, year) {
+        try {
+            const urlmonth = '/admin/month/export/'+month+"/"+year;
+            const response = await fetch(urlmonth, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to download PDF');
+            }
+
+            // Convert the response to a Blob
+            const blob = await response.blob();
+
+            // Create a temporary URL for the Blob
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a temporary link element
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'products.pdf'; // Set the filename
+            document.body.appendChild(a);
+            a.click(); // Trigger the download
+            a.remove(); // Remove the link from the DOM
+
+            // Revoke the temporary URL
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading the PDF:', error);
+            alert('Failed to download the PDF.');
+        }
+    }
+</script>
 
 
+<script>
+    const chartDatam = {
+        xAxis: [],
+        yAxis: []
+    };
+
+    // Function to load data with a dynamic startDate
+    async function fetchRevenueMonth(month) {
+        let url = '/revenue2';
+        if (startDate) {
+            url += `?month=`+month;
+        } else {
+            throw new Error('Either startDate or year must be provided');
+        }
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const datarevenue = await response.json();
+            console.log(datarevenue); // Debugging: Log the fetched data
+
+            // Populate chartData with the fetched data
+            chartDatam.xAxis = datarevenue.map(revenue => revenue.label);
+            chartDatam.yAxis = datarevenue.map(revenue => revenue.totalRevenue);
+
+            // Configure and render the ApexCharts chart
+            var options1m = {
+                chart: {
+                    id: "chart2",
+                    type: "area",
+                    height: 350,
+                    foreColor: "#000000",
+                    toolbar: {
+                        autoSelected: "pan",
+                        show: false
+                    }
+                },
+                colors: ["#00BAEC"],
+                stroke: {
+                    width: 3
+                },
+                grid: {
+                    borderColor: "#555",
+                    clipMarkers: false,
+                    yaxis: {
+                        lines: {
+                            show: false
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                fill: {
+                    gradient: {
+                        enabled: true,
+                        opacityFrom: 0.55,
+                        opacityTo: 0
+                    }
+                },
+                markers: {
+                    size: 5,
+                    colors: ["#000524"],
+                    strokeColor: "#00BAEC",
+                    strokeWidth: 3
+                },
+                series: [
+                    {
+                        data: chartDatam.yAxis
+                    }
+                ],
+                tooltip: {
+                    theme: "dark"
+                },
+                xaxis: {
+                    type: "datetime",
+                    categories: chartDatam.xAxis
+                },
+                yaxis: {
+                    min: 0,
+                    tickAmount: 4
+                }
+            };
+
+            var chart1m = new ApexCharts(document.querySelector("#chart-areamonth"), options1m);
+
+            chart1m.render();
+        } catch (error) {
+            console.error("Error loading revenue data:", error);
+        } finally {
+            // Reset the URL
+            url = '/revenue';
+        }
+    }
+
+    // Load default data on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchRevenueMonth('${month}'); // Call the function with the default start date
+    });
+</script>
 
 
 </body>
