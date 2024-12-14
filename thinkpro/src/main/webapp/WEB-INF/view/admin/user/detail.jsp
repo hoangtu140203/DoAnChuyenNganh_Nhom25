@@ -47,10 +47,6 @@
                                                     <td><span>${userview.email}</span></td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="title-width1">Mật khẩu</th>
-                                                    <td><span>${userview.password}</span></td>
-                                                </tr>
-                                                <tr>
                                                     <th class="title-width1">Tên</th>
                                                     <td><span>${userview.name}</span></td>
                                                 </tr>

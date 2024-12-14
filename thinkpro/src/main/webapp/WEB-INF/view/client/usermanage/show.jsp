@@ -51,6 +51,7 @@
     <jsp:include page="../layout/header.jsp"/>
 
     <div class="container-fluid fruite py-5 imgbanner">
+
         <div class="container py-5 mt-4">
             <div class="tab-class text-center ">
 
@@ -103,13 +104,15 @@
                                         </tr>
                                         <tr>
                                             <th class="title-width">Ngày sinh</th>
-                                            <td><form:input path="dob" class="form-control" type="date" value="${date}"/></td>
+                                            <td>
+                                                <form:input path="dob" class="form-control" type="date" value="${not empty date ? date : ''}"/>
+
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
                                     <button class="btn btn-warning py-2 rounded-pill text-light active" type="submit">Cập nhật</button>
                                 </form:form>
-
 
                             </div>
                         </div>

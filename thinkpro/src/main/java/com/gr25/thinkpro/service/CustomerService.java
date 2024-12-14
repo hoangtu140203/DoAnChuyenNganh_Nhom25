@@ -3,10 +3,13 @@ package com.gr25.thinkpro.service;
 import com.gr25.thinkpro.domain.dto.request.RegisterRequestDto;
 import com.gr25.thinkpro.domain.entity.Cart;
 import com.gr25.thinkpro.domain.entity.Customer;
+import com.gr25.thinkpro.domain.entity.Role;
 import com.gr25.thinkpro.repository.CartRepository;
 import com.gr25.thinkpro.repository.CustomerRepository;
 import com.gr25.thinkpro.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +37,15 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
+    public Page<Customer> findAll(Pageable page) {
+        return this.customerRepository.findAll(page);
+    }
+    public Page<Customer> findCustomersByName(String name, Pageable page) {
+        return this.customerRepository.findByNameContaining(name,page);
+    }
+    public Customer getCustomerByName(String name) {
+        return this.customerRepository.findCustomerByName(name);
+    }
     public Customer getCustomerById(long id) {
         return customerRepository.findCustomerByCustomerId(id);
     }
