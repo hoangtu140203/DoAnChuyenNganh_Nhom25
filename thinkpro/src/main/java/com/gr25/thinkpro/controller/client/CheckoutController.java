@@ -1,5 +1,6 @@
 package com.gr25.thinkpro.controller.client;
 
+import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
 import com.gr25.thinkpro.domain.entity.*;
 
 import com.gr25.thinkpro.domain.entity.Cart;
@@ -12,6 +13,7 @@ import com.gr25.thinkpro.service.CheckoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -59,13 +61,14 @@ public class CheckoutController {
             HttpServletRequest request,
             @RequestParam("receiverName") String receiverName,
             @RequestParam("receiverAddress") String receiverAddress,
-            @RequestParam("receiverPhone") String receiverPhone) {
+            @RequestParam("receiverPhone") String receiverPhone,
+            @RequestParam("paymentMethod") String paymentMethod) {
         Customer currentUser = new Customer();// null
         HttpSession session = request.getSession(false);
         long id = (long) session.getAttribute("id");
         currentUser.setCustomerId(id);
 
-        checkoutService.handlePlaceOrder(currentUser, session, receiverName, receiverAddress, receiverPhone);
+        checkoutService.handlePlaceOrder(currentUser, session, receiverName, receiverAddress, receiverPhone, paymentMethod);
 
         return "redirect:/thanks";
     }
@@ -100,5 +103,11 @@ public class CheckoutController {
         checkoutService.cancelBill(email, oderId, session, 1);
 
         return "redirect:/order-history";
+    }
+
+    @GetMapping("checkout/payment-info")
+    public ResponseEntity<PaymentInfo> getPaymentInfo() {
+        PaymentInfo paymentInfo = checkoutService.getPaymentInfo();
+        return ResponseEntity.ok(paymentInfo);
     }
 }

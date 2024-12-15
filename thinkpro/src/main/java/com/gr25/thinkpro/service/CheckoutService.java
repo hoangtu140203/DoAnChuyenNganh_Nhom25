@@ -1,6 +1,7 @@
 package com.gr25.thinkpro.service;
 
 
+import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
 import com.gr25.thinkpro.domain.entity.Bill;
 
 import com.gr25.thinkpro.domain.entity.CartDetail;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Transactional
 public interface CheckoutService {
-    void handlePlaceOrder(Customer currentUser, HttpSession session, String receiverName, String receiverAddress, String receiverPhone);
+    void handlePlaceOrder(Customer currentUser, HttpSession session, String receiverName, String receiverAddress, String receiverPhone, String paymentMethod);
 
     void handleUpdateCartBeforeCheckout(List<CartDetail> cartDetails);
 
@@ -20,4 +21,6 @@ public interface CheckoutService {
     List<Bill> fetchOrderByUser(Customer currentUser);
 
     void cancelBill(String email, long oderId, HttpSession session, int i);
+
+    PaymentInfo getPaymentInfo();
 }
