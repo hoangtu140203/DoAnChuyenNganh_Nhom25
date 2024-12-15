@@ -19,4 +19,5 @@ public interface CheckoutService {
 
     List<Bill> fetchOrderByUser(Customer currentUser);
 
+    void cancelBill(String email, long oderId, HttpSession session, int i);
 }

@@ -59,6 +59,8 @@ public class CartServiceImpl implements CartService {
 
                     if(quantity >= 0 && quantity <= realProduct.getQuantity()) {
                         cd.setQuantity(quantity);
+                    } else {
+                        throw new RuntimeException("So luong san pham khong du de tham vao gio hang, Vui long thu lai");
                     }
 
                     cd.setQuantity(quantity);
@@ -78,7 +80,7 @@ public class CartServiceImpl implements CartService {
                         oldDetail.setQuantity(oldDetail.getQuantity() + quantity);
                     }
                     else {
-
+                        throw new RuntimeException("So luong san pham khong du de tham vao gio hang, Vui long thu lai");
                     }
 
                     oldDetail.setQuantity(oldDetail.getQuantity() + quantity);

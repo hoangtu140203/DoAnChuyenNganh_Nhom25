@@ -36,7 +36,17 @@
                     <!-- Template Stylesheet -->
                     <link href="/client/css/style.css" rel="stylesheet">
                 </head>
+                <style>
+                    input[type=number]::-webkit-inner-spin-button,
+                    input[type=number]::-webkit-outer-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                    }
 
+                    input[type=number] {
+                        -moz-appearance: textfield; /* Ẩn spinner trên Firefox */
+                    }
+                </style>
                 <body>
 
                     <!-- Spinner Start -->
@@ -139,7 +149,15 @@
                                                     </div>
                                                     <div class="col-12 form-group mb-3">
                                                         <label>Số điện thoại</label>
-                                                        <input class="form-control" name="receiverPhone" required />
+                                                        <input class="form-control"
+                                                               name="receiverPhone"
+                                                               required
+                                                               pattern="^\d{10}$"
+                                                               type="text"
+                                                               title="Số điện thoại không hợp lệ. Vui lòng kiểm tra lại!"
+                                                               inputmode="numeric"
+                                                               id="receiverPhone"
+                                                        />
                                                     </div>
                                                     <div class="mt-4">
                                                         <i class="fas fa-arrow-left"></i>
@@ -210,6 +228,15 @@
 
                     <!-- Template Javascript -->
                     <script src="/client/js/main.js"></script>
+                    <script>
+                        const input = document.getElementById('receiverPhone');
+                        input.addEventListener('keydown', function (event) {
+                            // Kiểm tra nếu người dùng nhập một ký tự không phải là số
+                            if (!/[0-9]/.test(event.key) && event.key !== 'Backspace' && event.key !== 'Delete' && event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+                                event.preventDefault();  // Ngừng hành động mặc định nếu không phải số
+                            }
+                        });
+                    </script>
                 </body>
 
                 </html>

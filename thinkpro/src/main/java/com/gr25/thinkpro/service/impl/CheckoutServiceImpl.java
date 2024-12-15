@@ -1,5 +1,6 @@
 package com.gr25.thinkpro.service.impl;
 
+import com.gr25.thinkpro.domain.BillStatus;
 import com.gr25.thinkpro.domain.entity.*;
 import com.gr25.thinkpro.repository.*;
 import com.gr25.thinkpro.service.CheckoutService;
@@ -38,6 +39,13 @@ public class CheckoutServiceImpl implements CheckoutService {
         return billRepository.findByCustomer(currentUser);
     }
 
+    @Override
+    public void cancelBill(String email, long oderId, HttpSession session, int i) {
+        Bill bill = billRepository.findById(oderId).orElseThrow(() -> new RuntimeException("Bill not found"));
+        bill.setStatus(BillStatus.CANCELLED);
+        billRepository.save(bill);
+    }
+
 
     public void handlePlaceOrder(
             Customer user, HttpSession session,
@@ -60,7 +68,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 order.setFeeShip(0L);
                 order.setCreatedDate(LocalDateTime.now());
                 order.setLastModifiedDate(LocalDateTime.now());
-                order.setStatus("PENDING");
+                order.setStatus(BillStatus.PENDING);
 
                 long sum = 0;
                 for (CartDetail cd : cartDetails) {

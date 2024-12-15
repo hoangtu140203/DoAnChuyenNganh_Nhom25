@@ -5,6 +5,7 @@ import com.gr25.thinkpro.domain.entity.Customer;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface CartService {
     void handleAddProductToCart(String email, long productId, HttpSession session, long quantity);
 

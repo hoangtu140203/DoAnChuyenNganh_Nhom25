@@ -14,10 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,4 +90,15 @@ public class CheckoutController {
         return "client/cart/order-history";
     }
 
+    @PostMapping("/cancel-bill/{id}")
+    public String cancelOrder(@PathVariable long id, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        long oderId = id;
+        String email = (String) session.getAttribute("email");
+
+        checkoutService.cancelBill(email, oderId, session, 1);
+
+        return "redirect:/order-history";
+    }
 }
