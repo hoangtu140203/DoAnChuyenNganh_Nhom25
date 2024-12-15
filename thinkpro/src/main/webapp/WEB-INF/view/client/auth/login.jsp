@@ -26,8 +26,26 @@
     </style>
 </head>
 
-<body class="bg-primary">
-<div id="layoutAuthentication">
+<body class="bg-primary position-relative">
+    <c:if test="${not empty success}">
+        <div id="PasswordAuthentication" class="position-absolute w-100">
+            <main>
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5 w-50 ">
+                            <div class="card shadow-lg border-0 bg-dark rounded-lg w-50">
+                                <div class="card-body">
+                                    <div class="text-center text-light"><i class="fa-solid fa-circle-check fa-2x"></i></div>
+                                    <p class="text-light text-center">Mật khẩu đã được thiết lập lại thành công</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </c:if>
+    <div id="layoutAuthentication">
     <div id="layoutAuthentication_content">
         <main>
             <div class="container">
@@ -61,7 +79,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6 d-flex justify-content-center">
-                                            <a href="#">Quên mật khẩu?</a>
+                                            <a href="/forget">Quên mật khẩu?</a>
                                         </div>
                                     </div>
                                     <div>
@@ -111,6 +129,7 @@
                 toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
             }
         });
+        $("#PasswordAuthentication").delay(3000).fadeOut("slow");
     });
 </script>
 </body>

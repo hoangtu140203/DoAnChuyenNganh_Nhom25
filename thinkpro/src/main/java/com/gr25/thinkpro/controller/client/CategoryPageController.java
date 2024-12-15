@@ -6,6 +6,9 @@ import com.gr25.thinkpro.domain.entity.Customer;
 import com.gr25.thinkpro.service.CategoryService;
 import com.gr25.thinkpro.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -14,9 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,11 +25,55 @@ public class CategoryPageController {
     private final CategoryService categoryService;
 
     @GetMapping("/admin/category")
-    public String CategoryPage(Model model) {
-        List<Category> categories = this.categoryService.getCategories();
+    public String CategoryPage(Model model,@RequestParam("page") Optional<String> page) {
+        int pageNum = 1;
+        try {
+            if(page.isPresent()) {
+                pageNum = Integer.parseInt(page.get());
+            }
+        }catch (Exception e) {}
+
+        Pageable pageable = PageRequest.of(pageNum-1, 4);
+        Page<Category> categoryPage = this.categoryService.findAll(pageable);
+        List<Category> categories = categoryPage.getContent();
+
         model.addAttribute("cates", categories);
+        model.addAttribute("currentPage", pageNum);
+        model.addAttribute("totalPages", categoryPage.getTotalPages());
+
+        model.addAttribute("newCategory", new Category());
         return "admin/category/show";
     }
+
+
+    @PostMapping("/admin/category")
+    public String searchCategoryPage(Model model,@ModelAttribute("newCategory") Category category
+    ,@RequestParam("page") Optional<String> page) {
+
+        Category category1 = this.categoryService.getCategoryByName(category.getName());
+        Page<Category> categoryPage;
+
+        int pageNum = 1;
+        try {
+            if(page.isPresent()) {
+                pageNum = Integer.parseInt(page.get());
+            }
+        }catch (Exception e) {}
+        Pageable pageable = PageRequest.of(pageNum-1, 4);
+        if (category1 != null) {
+            categoryPage = this.categoryService.findBynameContaining(category1.getName(),pageable);
+        } else {
+            categoryPage = this.categoryService.findAll(pageable);
+        }
+
+        List<Category> categories = categoryPage.getContent();
+
+        model.addAttribute("cates", categories);
+        model.addAttribute("currentPage", pageNum);
+        model.addAttribute("totalPages", categoryPage.getTotalPages());
+        return "admin/category/show";
+    }
+
 
     @GetMapping("/admin/category/create")
     public String getcreateCategoryPage(Model model) {
@@ -85,7 +130,8 @@ public class CategoryPageController {
 
     @GetMapping("/admin/category/delete/{Id}")
     public String getdeleteCategoryPage(Model model, @PathVariable long Id) {
-        model.addAttribute("id",Id);
+        Category category = this.categoryService.getCategoryById(Id);
+        model.addAttribute("cate",category);
         model.addAttribute("newCate", new Category());
         return "admin/category/delete";
     }
@@ -96,4 +142,6 @@ public class CategoryPageController {
         this.categoryService.deleteCategory(category.getCategoryId());
         return "redirect:/admin/category";
     }
+
+
 }
