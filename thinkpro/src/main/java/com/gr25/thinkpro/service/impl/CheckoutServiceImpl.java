@@ -1,5 +1,7 @@
 package com.gr25.thinkpro.service.impl;
 
+import com.gr25.thinkpro.domain.BillStatus;
+import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
 import com.gr25.thinkpro.domain.entity.*;
 import com.gr25.thinkpro.repository.*;
 import com.gr25.thinkpro.service.CheckoutService;
@@ -8,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,13 +38,32 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     public List<Bill> fetchOrderByUser(Customer currentUser) {
-        return billRepository.findByCustomer(currentUser);
+        List<Bill> bills = billRepository.findByCustomer(currentUser);
+        Collections.reverse(bills);
+        return bills;
+    }
+
+    @Override
+    public void cancelBill(String email, long oderId, HttpSession session, int i) {
+        Bill bill = billRepository.findById(oderId).orElseThrow(() -> new RuntimeException("Bill not found"));
+        bill.setStatus(BillStatus.CANCELLED);
+        billRepository.save(bill);
+    }
+
+    @Override
+    public PaymentInfo getPaymentInfo() {
+        PaymentInfo paymentInfo = new PaymentInfo();
+        paymentInfo.setAccountName("DO THANH VINH");
+        paymentInfo.setBankId("TPB");
+        paymentInfo.setAccountNo("00006362453");
+        paymentInfo.setDescription("KHACH HANG THINKPRO CHUYEN KHOAN");
+        return paymentInfo;
     }
 
 
     public void handlePlaceOrder(
             Customer user, HttpSession session,
-            String receiverName, String receiverAddress, String receiverPhone) {
+            String receiverName, String receiverAddress, String receiverPhone, String paymentMethod) {
 
         // step 1: get cart by user
         Cart cart = cartRepository.findByCustomer(user);
@@ -56,11 +78,11 @@ public class CheckoutServiceImpl implements CheckoutService {
                 order.setReceiverName(receiverName);
                 order.setReceiverAddress(receiverAddress);
                 order.setReceiverPhone(receiverPhone);
-                order.setPaymentMethod("CASH_ON_DELIVERY");
+                order.setPaymentMethod(paymentMethod);
                 order.setFeeShip(0L);
                 order.setCreatedDate(LocalDateTime.now());
                 order.setLastModifiedDate(LocalDateTime.now());
-                order.setStatus("PENDING");
+                order.setStatus(BillStatus.PENDING);
 
                 long sum = 0;
                 for (CartDetail cd : cartDetails) {

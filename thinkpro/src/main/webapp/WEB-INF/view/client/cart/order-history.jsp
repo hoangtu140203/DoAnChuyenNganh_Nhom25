@@ -69,28 +69,51 @@
                     <th scope="col">Số lượng</th>
                     <th scope="col">Thành tiền</th>
                     <th scope="col">Trạng thái</th>
+                    <th scope="col">Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:if test="${ empty orders}">
                     <tr>
                         <td colspan="6">
-                            Không có đơn hàng nào được tạo
+                            Không có đơn hàng nào
                         </td>
                     </tr>
                 </c:if>
                 <c:forEach var="order" items="${orders}">
                     <tr>
-                        <td colspan="2">Order Id = ${order.billId}</td>
+                        <td colspan="2">Đơn hàng</td>
                         <td colspan="1">
                             <fmt:formatNumber type="number" value="${order.total}"/>
                             đ
                         </td>
                         <td colspan="2"></td>
                         <td colspan="1">
-
                             <c:if test="${order.status == 'PENDING'}">
-                                PENDING
+                                Đơn hàng chưa được xác nhận
+                            </c:if>
+                            <c:if test="${order.status == 'WAITING'}">
+                                Đơn hàng đang được giao
+                            </c:if>
+                            <c:if test="${order.status == 'CONFIRMED'}">
+                                Đơn hàng đã được xác nhận
+                            </c:if>
+                            <c:if test="${order.status == 'COMPLETED'}">
+                                Đơn hàng đã giao thành công
+                            </c:if>
+                            <c:if test="${order.status == 'CANCELLED'}">
+                                Đơn hàng đã bị hủy
+                            </c:if>
+                        </td>
+                        <td colspan="1">
+                            <c:if test="${order.status == 'PENDING'}">
+                                <form method="post" action="/cancel-bill/${order.billId}" style="margin: 0px; display: inline-block;">
+                                    <input type="hidden" name="${_csrf.parameterName}"
+                                           value="${_csrf.token}" />
+                                    <button class="btn btn-md rounded-circle bg-light border mt-4" style="width: 40px; height: 40px; margin: 1px;" >
+                                        <i class="fa fa-times text-danger"></i>
+                                    </button>
+                                </form>
                             </c:if>
                         </td>
                     </tr>

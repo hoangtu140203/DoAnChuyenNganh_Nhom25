@@ -36,8 +36,19 @@
                     <!-- Template Stylesheet -->
                     <link href="/client/css/style.css" rel="stylesheet">
                 </head>
+                <style>
+                    input[type=number]::-webkit-inner-spin-button,
+                    input[type=number]::-webkit-outer-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                    }
 
+                    input[type=number] {
+                        -moz-appearance: textfield; /* Ẩn spinner trên Firefox */
+                    }
+                </style>
                 <body>
+
 
                     <!-- Spinner Start -->
                     <div id="spinner"
@@ -104,20 +115,20 @@
                                                 <td>
                                                     <div class="input-group quantity mt-4" style="width: 100px;">
                                                         <div class="input-group-btn">
-                                                            <button
-                                                                class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                                            <button class="btn btn-sm btn-minus rounded-circle bg-light border">
                                                                 <i class="fa fa-minus"></i>
                                                             </button>
                                                         </div>
-                                                        <input type="text"
-                                                            class="form-control form-control-sm text-center border-0"
-                                                            value="${cartDetail.quantity}"
-                                                            data-cart-detail-id="${cartDetail.id}"
-                                                            data-cart-detail-price="${cartDetail.product.price}"
-                                                            data-cart-detail-index="${status.index}">
+                                                        <input type="number"
+                                                               class="form-control form-control-sm text-center border-0"
+                                                               value="${cartDetail.quantity}"
+                                                               min="1"
+                                                               max="${cartDetail.product.quantity}"
+                                                               data-cart-detail-id="${cartDetail.id}"
+                                                               data-cart-detail-price="${cartDetail.product.price}"
+                                                               data-cart-detail-index="${status.index}">
                                                         <div class="input-group-btn">
-                                                            <button
-                                                                class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                                            <button class="btn btn-sm btn-plus rounded-circle bg-light border">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
                                                         </div>
@@ -226,6 +237,35 @@
                     <script src="/client/lib/owlcarousel/owl.carousel.min.js"></script>
 
                     <!-- Template Javascript -->
+<%--                    <script>--%>
+<%--                        document.querySelectorAll('.btn-plus').forEach(button => {--%>
+<%--                            button.addEventListener('click', function () {--%>
+<%--                                const input = this.closest('.input-group').querySelector('input[type="number"]');--%>
+<%--                                const max = parseInt(input.getAttribute('max'));--%>
+<%--                                const currentValue = parseInt(input.value);--%>
+<%--                                if (currentValue < max) {--%>
+<%--                                    input.value = currentValue + 1;--%>
+<%--                                } else {--%>
+<%--                                    alert('Không thể tăng thêm, đã đạt số lượng tối đa!');--%>
+<%--                                }--%>
+<%--                                input.value(max);--%>
+<%--                            });--%>
+<%--                        });--%>
+
+<%--                        document.querySelectorAll('.btn-minus').forEach(button => {--%>
+<%--                            button.addEventListener('click', function () {--%>
+<%--                                const input = this.closest('.input-group').querySelector('input[type="number"]');--%>
+<%--                                const min = parseInt(input.getAttribute('min')) || 0;--%>
+<%--                                const currentValue = parseInt(input.value);--%>
+
+<%--                                if (currentValue > min) {--%>
+<%--                                    input.value = currentValue - 1;--%>
+<%--                                } else {--%>
+<%--                                    alert('Không thể giảm thêm, đã đạt số lượng tối thiểu!');--%>
+<%--                                }--%>
+<%--                            });--%>
+<%--                        });--%>
+<%--                    </script>--%>
                     <script src="/client/js/main.js"></script>
                 </body>
 

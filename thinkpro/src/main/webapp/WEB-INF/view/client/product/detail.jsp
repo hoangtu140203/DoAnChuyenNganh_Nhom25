@@ -109,6 +109,7 @@
                     <div class="col-lg-6">
                         <h4 class="fw-bold mb-3"> ${product.name}</h4>
                         <p class="mb-3">${product.category.name}</p>
+                        <p class="mb-3">Số lượng còn lại : ${product.quantity}</p>
                         <div class="product-price">
                             <h5 class="original-price"><fmt:formatNumber type="number"
                                                                          value="${product.price}"/> đ</h5>
@@ -145,18 +146,14 @@
                             </div>
                             <input type="text"
                                    class="form-control form-control-sm text-center border-0" value="1"
-                                   data-cart-detail-index="0">
+                                   data-cart-detail-index="0" id="quantityProduct"
+                            >
                             <div class="input-group-btn">
                                 <button class="btn btn-sm btn-plus rounded-circle bg-light border">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
                         </div>
-                        <c:if test="${not empty errorQuantity}">
-                            <div class="mt-1 text-danger align-content-center">
-                                <span class="">${errorQuantity}</span>
-                            </div>
-                        </c:if>
                         <!-- <form action="/add-product-from-view-detail" method="post"
                             modelAttribute="product"> -->
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
