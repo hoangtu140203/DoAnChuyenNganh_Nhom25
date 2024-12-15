@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +42,6 @@ import java.util.Random;
 @Controller
 @RequiredArgsConstructor
 public class HomePageController {
-    @Autowired
     private final CustomerService customerService;
     private final PasswordEncoder passwordEncoder;
 
@@ -109,16 +109,9 @@ public class HomePageController {
         return "client/auth/forget";
     }
 
-    @Autowired
-    private JavaMailSender mailSender;
 
-    private void sendEmailWithVerificationCode(String email, String verificationCode) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Mã xác thực của bạn");
-        message.setText("Mã xác thực của bạn là: " + verificationCode);
-        mailSender.send(message);
-    }
+
+
 
     @PostMapping("/forget")
     public String handleForgetPassword(Model model, @ModelAttribute("registerUser") @Valid RegisterRequestDto registerRequestDto, BindingResult bindingResult
@@ -135,7 +128,7 @@ public class HomePageController {
         int code = 100000 + random.nextInt(900000);
         String verificationCode = String.valueOf(code);
 
-        sendEmailWithVerificationCode(registerRequestDto.getEmail(), verificationCode);
+        customerService.sendEmailWithVerificationCode(registerRequestDto.getEmail(), verificationCode);
 
         request.getSession().setAttribute("verificationCode", verificationCode);
         request.getSession().setAttribute("email", registerRequestDto.getEmail());

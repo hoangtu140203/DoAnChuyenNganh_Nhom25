@@ -7,11 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Properties;
 
 @SpringBootApplication
 @Slf4j
+@EnableAsync
 public class ThinkproApplication {
 
 	public static void main(String[] args) {

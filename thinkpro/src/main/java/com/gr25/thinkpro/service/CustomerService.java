@@ -8,8 +8,12 @@ import com.gr25.thinkpro.repository.CartRepository;
 import com.gr25.thinkpro.repository.CustomerRepository;
 import com.gr25.thinkpro.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,6 +68,16 @@ public class CustomerService {
         else {
             return null;
         }
+    }
+    @Autowired
+    private JavaMailSender mailSender;
+    @Async
+    public void sendEmailWithVerificationCode(String email, String verificationCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Mã xác thực của bạn");
+        message.setText("Mã xác thực của bạn là: " + verificationCode);
+        mailSender.send(message);
     }
 
     public Customer saveCustomer(Customer customer) {
