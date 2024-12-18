@@ -268,7 +268,7 @@
                                 <c:forEach var="category" items="${categories}">
                                     <li>
                                         <div class="d-flex justify-content-between fruite-name">
-                                            <a href="#">${category.name}</a>
+                                            <a href="/home?category=${category.name}">${category.name}</a>
                                             <span>(${category.products.size()})</span>
                                         </div>
                                     </li>

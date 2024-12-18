@@ -71,6 +71,7 @@ public class CustomerService {
     }
     @Autowired
     private JavaMailSender mailSender;
+
     @Async
     public void sendEmailWithVerificationCode(String email, String verificationCode) {
         SimpleMailMessage message = new SimpleMailMessage();

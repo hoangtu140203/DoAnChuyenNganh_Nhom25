@@ -47,4 +47,6 @@ public class Bill extends DateAuditing implements Serializable {
     private String receiverAddress;
 
     private String receiverPhone;
+
+
 }
