@@ -37,6 +37,8 @@ public class Product extends DateAuditing implements Serializable {
 
     private double discount;
 
+    private long finalPrice;
+
     @OneToMany(mappedBy = "product")
     List<CartDetail> cartDetails;
 
@@ -52,4 +54,11 @@ public class Product extends DateAuditing implements Serializable {
 
     @OneToMany(mappedBy = "product")
     List<FeedBack> feedBacks;
+
+    public void setFinalPrice(){
+        this.finalPrice = (long) (this.price-this.price*this.discount);
+    }
+
+
+
 }

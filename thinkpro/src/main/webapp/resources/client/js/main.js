@@ -163,12 +163,19 @@
     // });
     $('.quantity button').on('click', function () {
         let change = 0;
-
         var button = $(this);
+        const input = button.parent().parent().find('input');
         var oldValue = button.parent().parent().find('input').val();
         if (button.hasClass('btn-plus')) {
-            var newVal = parseFloat(oldValue) + 1;
-            change = 1;
+            const max = parseInt(input.attr('max'))
+            // console.log(max);
+            if (parseFloat(oldValue) + 1 > max) {
+                alert("Bạn đã vượt quá số lượng")
+                var newVal = max;
+            } else {
+                var newVal = parseFloat(oldValue) + 1;
+                change = 1;
+            }
         } else {
             if (oldValue > 1) {
                 var newVal = parseFloat(oldValue) - 1;
@@ -177,8 +184,8 @@
                 newVal = 1;
             }
         }
-        const input = button.parent().parent().find('input');
         input.val(newVal);
+        // console.log(newVal);
 
         //set form index
         const index = input.attr("data-cart-detail-index")
@@ -384,11 +391,12 @@
             })
             return;
         }
-
         const productId = $(this).attr('data-product-id');
         const token = $("meta[name='_csrf']").attr("content");
         const header = $("meta[name='_csrf_header']").attr("content");
-        const quantity = $("#cartDetails0\\.quantity").val();
+        // const quantity = $("#cartDetails0\\.quantity").val();
+        const quantity = $("#quantityProduct").val();
+        console.log(quantity);
         $.ajax({
             url: `${window.location.origin}/api/add-product-to-cart`,
             beforeSend: function (xhr) {
@@ -412,7 +420,22 @@
 
             },
             error: function (response) {
-                alert("có lỗi xảy ra, check code đi ba :v")
+                if(response.responseText === "ERROR_CART") {
+                    $.toast({
+                        heading: 'Giỏ hàng',
+                        text: "Số lượng sản phẩm không đủ để thêm vào giỏ hàng, vui lòng nhập lại số lượng!",
+                        position: 'top-right',
+                        icon: 'error'
+                    })
+                }
+                else {
+                    $.toast({
+                        heading: 'Giỏ hàng',
+                        text: "Lỗi hệ thống",
+                        position: 'top-right',
+                        icon: 'error'
+                    })
+                }
                 console.log("error: ", response);
             }
 

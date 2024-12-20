@@ -3,13 +3,23 @@ package com.gr25.thinkpro.controller.client;
 
 import com.gr25.thinkpro.domain.dto.request.ProductCriteriaDto;
 import com.gr25.thinkpro.domain.dto.request.RegisterRequestDto;
+import com.gr25.thinkpro.domain.entity.Customer;
+import com.gr25.thinkpro.repository.CustomerRepository;
+import com.gr25.thinkpro.repository.RoleRepository;
 import com.gr25.thinkpro.domain.entity.Category;
 import com.gr25.thinkpro.domain.entity.Product;
 import com.gr25.thinkpro.service.CategoryService;
 import com.gr25.thinkpro.service.CustomerService;
 import com.gr25.thinkpro.service.ProductService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,16 +28,22 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Objects;
+import java.util.Random;
 
 @Controller
 @RequiredArgsConstructor
 public class HomePageController {
     private final CustomerService customerService;
+    private final PasswordEncoder passwordEncoder;
 
     private final ProductService productService;
 
@@ -71,20 +87,147 @@ public class HomePageController {
     public String getHomePage(Model model, @ModelAttribute ProductCriteriaDto productCriteriaDto,
                               @RequestParam(name = "pageNum") Optional<Integer> pageNum,
                               @RequestParam(name = "sortBy") Optional<String> sortBy,
-                              @RequestParam(name = "isAscending") Optional<Boolean> isAscending) {
+                              HttpServletRequest request) {
+
         if(!pageNum.isPresent()) {
             pageNum=Optional.of(1);
         }
+
+        if(productCriteriaDto.getName() != null ) {
+            request.getSession().setAttribute("name", productCriteriaDto.getName());
+        }
+        else{
+            if(request.getSession().getAttribute("name")!=null){
+                productCriteriaDto.setName((String)request.getSession().getAttribute("name"));
+            }
+        }
+        if(productCriteriaDto.getCategory() != null && !productCriteriaDto.getCategory().isEmpty()) {
+            request.getSession().setAttribute("category", productCriteriaDto.getCategory());
+        }
+        else{
+            if(request.getSession().getAttribute("category")!=null){
+                productCriteriaDto.setCategory((String)request.getSession().getAttribute("category"));
+            }
+        }
+
+        if(productCriteriaDto.getPrice() != null && !productCriteriaDto.getPrice().isEmpty()) {
+            request.getSession().setAttribute("finalPrice", productCriteriaDto.getPrice());
+        }
+        else{
+            if(request.getSession().getAttribute("finalPrice")!=null){
+                productCriteriaDto.setPrice((String)request.getSession().getAttribute("finalPrice"));
+            }
+        }
+
+        String sort = "createdDate";
+        boolean isAsc = false;
+
+        if (sortBy.isPresent()) {
+            switch (sortBy.get()) {
+                case "desc":
+                    sort = "price";
+                    isAsc = false;
+                    break;
+                case "asc":
+                    sort = "price";
+                    isAsc = true;
+                    break;
+                default:
+                    sort = "createdDate";
+                    isAsc = false;
+            }
+        }
         PageRequest pageRequest = PageRequest.of(pageNum.get()-1 , 8,
-                isAscending.orElse(true) ? Sort.by(sortBy.orElse("createdDate")).ascending() : Sort.by(sortBy.orElse("createdDate")).descending());
+                isAsc ? Sort.by(sort).ascending() : Sort.by(sort).descending());
         Page<Product> page = productService.findProduct(productCriteriaDto, pageRequest);
         model.addAttribute("products", page.getContent());
         model.addAttribute("currentPage", page.getNumber()+1);
         model.addAttribute("totalPages", page.getTotalPages());
         List<Category> categories=categoryService.findAll();
         model.addAttribute("categories",categories);
+
+
+        model.addAttribute("selectedCategory", productCriteriaDto.getCategory());
+        model.addAttribute("selectedSortBy", sortBy.orElse(" "));
+        model.addAttribute("selectedPrice", productCriteriaDto.getPrice());
+        model.addAttribute("searchName", productCriteriaDto.getName());
         return "client/homepage/index";
     }
 
 
+    @GetMapping("/forget")
+    public String getForgetPassword(Model model) {
+        model.addAttribute("registerUser", new RegisterRequestDto());
+        return "client/auth/forget";
+    }
+
+
+
+
+
+    @PostMapping("/forget")
+    public String handleForgetPassword(Model model, @ModelAttribute("registerUser") @Valid RegisterRequestDto registerRequestDto, BindingResult bindingResult
+    , RedirectAttributes redirectAttributes, HttpServletRequest request ) {
+
+        if(!customerService.existByEmail(registerRequestDto.getEmail())) {
+            bindingResult.rejectValue("email", "error.registerRequestDto", "Email không tồn tại");
+        }
+        if(bindingResult.hasErrors()) {
+            return "client/auth/forget";
+        }
+
+        Random random = new Random();
+        int code = 100000 + random.nextInt(900000);
+        String verificationCode = String.valueOf(code);
+
+        customerService.sendEmailWithVerificationCode(registerRequestDto.getEmail(), verificationCode);
+
+        request.getSession().setAttribute("verificationCode", verificationCode);
+        request.getSession().setAttribute("email", registerRequestDto.getEmail());
+        redirectAttributes.addFlashAttribute("registerUser", new RegisterRequestDto());
+        return "redirect:/forget/confirmed";
+    }
+
+    @GetMapping("/forget/confirmed")
+    public String getForgetPasswordConfirm(Model model) {
+        model.addAttribute("registerUser", new RegisterRequestDto());
+
+        return "client/auth/confirmed";
+    }
+
+    @PostMapping("/forget/confirmed")
+    public String handleConfirmCode(Model model, @ModelAttribute("registerUser") @Valid RegisterRequestDto registerRequestDto,
+                                    RedirectAttributes redirectAttributes,HttpServletRequest request ) {
+        String code = (String) request.getSession().getAttribute("verificationCode");
+        if (registerRequestDto.getConfirmCode() != null && registerRequestDto.getConfirmCode().equals(code)) {
+            return "redirect:/forget/confirmed/updatepass";
+        }
+
+        model.addAttribute("error", "Mã xác nhận không chính xác!");
+        return "client/auth/confirmed";
+
+    }
+
+    @GetMapping ("/forget/confirmed/updatepass")
+    public String getForgetPasswordUpdate(Model model) {
+        model.addAttribute("registerUser", new RegisterRequestDto());
+        return "client/auth/updatepass";
+    }
+    @PostMapping("/forget/confirmed/updatepass")
+    public String ForgetPasswordUpdate(Model model, @ModelAttribute("registerUser") @Valid RegisterRequestDto registerRequestDto,
+                                       BindingResult bindingResult, HttpServletRequest request, RedirectAttributes redirectAttributes ) {
+
+        if(!Objects.equals(registerRequestDto.getPassword(), registerRequestDto.getRePassword())){
+            bindingResult.rejectValue("rePassword", "error.registerRequestDto","Mật khẩu xác thực không khớp");
+        }
+        if(bindingResult.hasErrors()) {
+            return "client/auth/updatepass";
+        }
+        String email = (String) request.getSession().getAttribute("email");
+        Customer customer = this.customerService.getCustomerByEmail(email);
+        customer.setPassword(this.passwordEncoder.encode(registerRequestDto.getPassword()));
+        this.customerService.saveCustomer(customer);
+        redirectAttributes.addFlashAttribute("success","thanh cong");
+        return "redirect:/login";
+    }
 }

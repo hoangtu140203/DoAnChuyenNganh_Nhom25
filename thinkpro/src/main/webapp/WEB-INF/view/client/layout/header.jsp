@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- Navbar start -->
 <div class="container-fluid fixed-top">
@@ -10,12 +10,13 @@
 
             <div class="collapse navbar-collapse bg-white justify-content-between mx-5" id="navbarCollapse">
                 <div class="mx-auto">
-                    <form class="d-flex w-200">
-                        <input class="form-control mr-sm-2 search-input" type="search" placeholder="Search"
-                               aria-label="Search">
+                    <form class="d-flex w-200" method="get" action="/home">
+                        <input class="form-control mr-sm-2 search-input" type="search" placeholder="Search" name="name"
+                               aria-label="Search" value="${searchName}">
                         <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white ms-2"
                                 data-bs-toggle="modal" data-bs-target="#searchModal"><i
-                                class="fas fa-search text-primary"></i></button>
+                                class="fas fa-search text-primary"></i>
+                        </button>
                     </form>
                 </div>
                 <div class="d-flex m-3 me-0">

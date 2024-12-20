@@ -1,5 +1,6 @@
 package com.gr25.thinkpro.domain.entity;
 
+import com.gr25.thinkpro.domain.BillStatus;
 import com.gr25.thinkpro.domain.entity.common.DateAuditing;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,9 @@ public class Bill extends DateAuditing implements Serializable {
     @Column(name = "bill_id")
     private long billId;
 
-    private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private BillStatus status;
 
     private String paymentMethod;
 
@@ -44,4 +47,6 @@ public class Bill extends DateAuditing implements Serializable {
     private String receiverAddress;
 
     private String receiverPhone;
+
+
 }

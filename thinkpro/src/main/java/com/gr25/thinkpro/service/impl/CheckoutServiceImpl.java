@@ -1,5 +1,9 @@
 package com.gr25.thinkpro.service.impl;
 
+import com.gr25.thinkpro.domain.BillStatus;
+import com.gr25.thinkpro.domain.dto.request.BillInfo;
+import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
+import com.gr25.thinkpro.domain.dto.request.PaymentInfoResponse;
 import com.gr25.thinkpro.domain.entity.*;
 import com.gr25.thinkpro.repository.*;
 import com.gr25.thinkpro.service.CheckoutService;
@@ -7,9 +11,10 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +39,50 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 
     @Override
-    public List<Bill> fetchOrderByUser(Customer currentUser) {
-        return billRepository.findByCustomer(currentUser);
+    public List<BillInfo> fetchOrderByUser(Customer currentUser) {
+        List<Bill> bills = billRepository.findByCustomer(currentUser);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        List<BillInfo> billInfos = new ArrayList<>();
+        bills.forEach(bill -> {
+            BillInfo billInfo = new BillInfo();
+            billInfo.setBillDetails(bill.getBillDetails());
+            billInfo.setCreatedDate(bill.getCreatedDate().format(formatter));
+            billInfo.setBillId(bill.getBillId());
+            billInfo.setFeeShip(bill.getFeeShip());
+            billInfo.setCustomer(bill.getCustomer());
+            billInfo.setTotal(bill.getTotal());
+            billInfo.setPaymentMethod(bill.getPaymentMethod());
+            billInfo.setStatus(bill.getStatus());
+            billInfo.setReceiverName(bill.getReceiverName());
+            billInfo.setReceiverPhone(bill.getReceiverPhone());
+            billInfo.setReceiverAddress(bill.getReceiverAddress());
+            billInfos.add(billInfo);
+        });
+        Collections.reverse(billInfos);
+        return billInfos;
+    }
+
+    @Override
+    public void cancelBill(String email, long oderId, HttpSession session, int i) {
+        Bill bill = billRepository.findById(oderId).orElseThrow(() -> new RuntimeException("Bill not found"));
+        bill.setStatus(BillStatus.CANCELLED);
+        billRepository.save(bill);
+    }
+
+    @Override
+    public PaymentInfo getPaymentInfo() {
+        PaymentInfo paymentInfo = new PaymentInfo();
+        paymentInfo.setAccountName("DO THANH VINH");
+        paymentInfo.setBankId("MB");
+        paymentInfo.setAccountNo("25112000003");
+        paymentInfo.setDescription("KHACH HANG THINKPRO CHUYEN KHOAN");
+        return paymentInfo;
     }
 
 
     public void handlePlaceOrder(
             Customer user, HttpSession session,
-            String receiverName, String receiverAddress, String receiverPhone) {
+            String receiverName, String receiverAddress, String receiverPhone, String paymentMethod) {
 
         // step 1: get cart by user
         Cart cart = cartRepository.findByCustomer(user);
@@ -56,11 +97,11 @@ public class CheckoutServiceImpl implements CheckoutService {
                 order.setReceiverName(receiverName);
                 order.setReceiverAddress(receiverAddress);
                 order.setReceiverPhone(receiverPhone);
-                order.setPaymentMethod("CASH_ON_DELIVERY");
+                order.setPaymentMethod(paymentMethod);
                 order.setFeeShip(0L);
                 order.setCreatedDate(LocalDateTime.now());
                 order.setLastModifiedDate(LocalDateTime.now());
-                order.setStatus("PENDING");
+                order.setStatus(BillStatus.WAITING);
 
                 long sum = 0;
                 for (CartDetail cd : cartDetails) {

@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 
 @Configuration
@@ -47,7 +48,7 @@ public class SecurityConfiguration {
                                 DispatcherType.INCLUDE)
                         .permitAll()
                         .requestMatchers("/", "/client/**", "/css/**", "/js/**", "/images/**", "/login", "/register"
-                                , "/error/**","/session-expired","/home","/product/**",
+                                , "/error/**","/session-expired","/home","/product/**","/forget/**",
                                 "/top-products**","/revenue**","/admin/month**","/admin/day**","/admin/day**"
                                 ,"/admin/export","/admin/day/export","/admin/month/export")
                         .permitAll()
@@ -91,4 +92,5 @@ public class SecurityConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
 }

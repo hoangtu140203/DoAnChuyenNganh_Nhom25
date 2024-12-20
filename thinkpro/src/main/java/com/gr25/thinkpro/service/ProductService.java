@@ -29,12 +29,14 @@ public class ProductService  {
             public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
 
-                if (productCriteriaDto.getName() != null && !productCriteriaDto.getName().isEmpty()) {
+                if (productCriteriaDto.getName() != null && !productCriteriaDto.getName().trim().isEmpty()) {
                     predicates.add(criteriaBuilder.like(root.get("name"), "%" + productCriteriaDto.getName() + "%"));
                 }
 
+
+
                 long min = 0, max = 0;
-                if (productCriteriaDto.getPrice() != null && !productCriteriaDto.getPrice().isEmpty()) {
+                if (productCriteriaDto.getPrice() != null && !productCriteriaDto.getPrice().trim().isEmpty()) {
                     switch (productCriteriaDto.getPrice()) {
                         case "duoi-10-trieu":
                             min = 1;
@@ -53,10 +55,10 @@ public class ProductService  {
                             max = 200000000;
                             break;
                     }
-                    predicates.add(criteriaBuilder.between(root.get("price"), min, max));
+                    predicates.add(criteriaBuilder.between(root.get("finalPrice"), min, max));
                 }
 
-                if (productCriteriaDto.getCategory() != null && !productCriteriaDto.getCategory().isEmpty()) {
+                if (productCriteriaDto.getCategory() != null && !productCriteriaDto.getCategory().trim().isEmpty()) {
 
                     Join<Object, Object> joinCategory = root.join("category", JoinType.INNER);
                     predicates.add(criteriaBuilder.equal(joinCategory.get("name"), productCriteriaDto.getCategory()));

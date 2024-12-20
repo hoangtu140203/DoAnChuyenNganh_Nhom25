@@ -27,18 +27,22 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping("/api/add-product-to-cart")
-    public ResponseEntity<Integer> addProductToCart(
+    public ResponseEntity<?> addProductToCart(
             @RequestBody() CartRequestDto cartRequest,
             HttpServletRequest request) {
 
-        HttpSession session = request.getSession(false);
-        String email = (String) session.getAttribute("email");
-        cartService.handleAddProductToCart(email, cartRequest.getProductId(), session,
-                cartRequest.getQuantity());
+        try{
+            HttpSession session = request.getSession(false);
+            String email = (String) session.getAttribute("email");
+            cartService.handleAddProductToCart(email, cartRequest.getProductId(), session,
+                    cartRequest.getQuantity());
 
-        int sum = (int) session.getAttribute("sum");
+            int sum = (int) session.getAttribute("sum");
 
-        return ResponseEntity.ok().body(sum);
+            return ResponseEntity.ok().body(sum);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/cart")

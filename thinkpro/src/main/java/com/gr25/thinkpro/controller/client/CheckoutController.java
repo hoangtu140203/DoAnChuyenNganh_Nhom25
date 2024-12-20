@@ -1,5 +1,8 @@
 package com.gr25.thinkpro.controller.client;
 
+import com.gr25.thinkpro.domain.dto.request.FeedbackRequestDto;
+import com.gr25.thinkpro.domain.dto.request.BillInfo;
+import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
 import com.gr25.thinkpro.domain.entity.*;
 
 import com.gr25.thinkpro.domain.entity.Cart;
@@ -9,15 +12,14 @@ import com.gr25.thinkpro.domain.entity.Product;
 
 import com.gr25.thinkpro.service.CartService;
 import com.gr25.thinkpro.service.CheckoutService;
+import com.gr25.thinkpro.service.FeedBackService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.List;
 public class CheckoutController {
     private final CartService cartService;
     private final CheckoutService checkoutService;
+    private final FeedBackService feedBackService;
 
     @GetMapping("/checkout")
     public String getCheckOutPage(Model model, HttpServletRequest request) {
@@ -62,13 +65,14 @@ public class CheckoutController {
             HttpServletRequest request,
             @RequestParam("receiverName") String receiverName,
             @RequestParam("receiverAddress") String receiverAddress,
-            @RequestParam("receiverPhone") String receiverPhone) {
+            @RequestParam("receiverPhone") String receiverPhone,
+            @RequestParam("paymentMethod") String paymentMethod) {
         Customer currentUser = new Customer();// null
         HttpSession session = request.getSession(false);
         long id = (long) session.getAttribute("id");
         currentUser.setCustomerId(id);
 
-        checkoutService.handlePlaceOrder(currentUser, session, receiverName, receiverAddress, receiverPhone);
+        checkoutService.handlePlaceOrder(currentUser, session, receiverName, receiverAddress, receiverPhone, paymentMethod);
 
         return "redirect:/thanks";
     }
@@ -87,10 +91,33 @@ public class CheckoutController {
         long id = (long) session.getAttribute("id");
         currentUser.setCustomerId(id);
 
-        List<Bill> orders = checkoutService.fetchOrderByUser(currentUser);
+        List<BillInfo> orders = checkoutService.fetchOrderByUser(currentUser);
         model.addAttribute("orders", orders);
 
         return "client/cart/order-history";
     }
 
+    @PostMapping("/cancel-bill/{id}")
+    public String cancelOrder(@PathVariable long id, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        long oderId = id;
+        String email = (String) session.getAttribute("email");
+
+        checkoutService.cancelBill(email, oderId, session, 1);
+
+        return "redirect:/order-history";
+    }
+
+    @GetMapping("checkout/payment-info")
+    public ResponseEntity<PaymentInfo> getPaymentInfo() {
+        PaymentInfo paymentInfo = checkoutService.getPaymentInfo();
+        return ResponseEntity.ok(paymentInfo);
+    }
+
+    @PostMapping("/api/give-feedback")
+    public ResponseEntity<?> giveFeedBack(@RequestBody FeedbackRequestDto requestDto){
+        feedBackService.giveFeedBack(requestDto);
+        return ResponseEntity.ok("Đánh giá thành công!");
+    }
 }
