@@ -1,5 +1,6 @@
 package com.gr25.thinkpro.controller.client;
 
+import com.gr25.thinkpro.domain.dto.request.FeedbackRequestDto;
 import com.gr25.thinkpro.domain.dto.request.BillInfo;
 import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
 import com.gr25.thinkpro.domain.entity.*;
@@ -11,6 +12,7 @@ import com.gr25.thinkpro.domain.entity.Product;
 
 import com.gr25.thinkpro.service.CartService;
 import com.gr25.thinkpro.service.CheckoutService;
+import com.gr25.thinkpro.service.FeedBackService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.List;
 public class CheckoutController {
     private final CartService cartService;
     private final CheckoutService checkoutService;
+    private final FeedBackService feedBackService;
 
     @GetMapping("/checkout")
     public String getCheckOutPage(Model model, HttpServletRequest request) {
@@ -64,20 +67,15 @@ public class CheckoutController {
             @RequestParam("receiverAddress") String receiverAddress,
             @RequestParam("receiverPhone") String receiverPhone,
             @RequestParam("paymentMethod") String paymentMethod) {
-        try {
-            Customer currentUser = new Customer();// null
-            HttpSession session = request.getSession(false);
-            long id = (long) session.getAttribute("id");
-            currentUser.setCustomerId(id);
+        Customer currentUser = new Customer();// null
+        HttpSession session = request.getSession(false);
+        long id = (long) session.getAttribute("id");
+        currentUser.setCustomerId(id);
 
-            checkoutService.handlePlaceOrder(currentUser, session, receiverName, receiverAddress, receiverPhone, paymentMethod);
+        checkoutService.handlePlaceOrder(currentUser, session, receiverName, receiverAddress, receiverPhone, paymentMethod);
 
-            return "redirect:/thanks";
-        } catch (RuntimeException e) {
-            throw e;
-        }
+        return "redirect:/thanks";
     }
-
 
     @GetMapping("/thanks")
     public String getThankYouPage(Model model) {
@@ -115,5 +113,11 @@ public class CheckoutController {
     public ResponseEntity<PaymentInfo> getPaymentInfo() {
         PaymentInfo paymentInfo = checkoutService.getPaymentInfo();
         return ResponseEntity.ok(paymentInfo);
+    }
+
+    @PostMapping("/api/give-feedback")
+    public ResponseEntity<?> giveFeedBack(@RequestBody FeedbackRequestDto requestDto){
+        feedBackService.giveFeedBack(requestDto);
+        return ResponseEntity.ok("Đánh giá thành công!");
     }
 }

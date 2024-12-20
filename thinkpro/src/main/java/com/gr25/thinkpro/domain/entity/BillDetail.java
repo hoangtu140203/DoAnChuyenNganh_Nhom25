@@ -31,4 +31,6 @@ public class BillDetail extends DateAuditing implements Serializable {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    private boolean feedback = false;
 }

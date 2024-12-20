@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.aspectj.lang.annotation.RequiredTypes;
 
 @Getter
 @Setter
@@ -25,4 +26,7 @@ public class RegisterRequestDto {
 
     @Pattern(message = "Số điện thoại không hợp lệ", regexp = "^(0[3|5|7|8|9])+([0-9]{8})$")
     private String phone;
+
+
+    private String confirmCode;
 }

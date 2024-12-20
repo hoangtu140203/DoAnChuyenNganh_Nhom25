@@ -33,7 +33,10 @@ public class CustomerManageConTroller {
     public String getUserManagePage(Model model) {
         Customer customer = customerService.getCurrentCustomer();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String date = dateFormat.format(customer.getDob());
+        String date="" ;
+        if(customer.getDob() != null) {
+            date = dateFormat.format(customer.getDob());
+        }
         if (customer != null) {
             model.addAttribute("customer", customer);
             model.addAttribute("date", date);

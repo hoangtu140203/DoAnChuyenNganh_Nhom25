@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-12 mx-auto">
                             <div class="d-flex justify-content-between">
-                                <h3>Xóa danh mục với id = ${id}</h3>
+                                <h3>Xóa danh mục với tên = ${cate.name}</h3>
                             </div>
                             <ol class="breadcrumb mb-4">
                                 <li class="breadcrumb-item"><a href="/admin/category">Quay lại</a></li>
@@ -39,7 +39,7 @@
                                        modelAttribute="newCate">
                                 <div class="mb-3" style="display: none">
                                     <label class="form-label" >Id:</label>
-                                    <form:input value="${id}" type="text" class="form-control"
+                                    <form:input value="${cate.categoryId}" type="text" class="form-control"
                                                 path="categoryId" />
                                 </div>
                                 <button type="submit" class="btn btn-danger">Xóa</button>
