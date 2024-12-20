@@ -1,7 +1,9 @@
 package com.gr25.thinkpro.service.impl;
 
 import com.gr25.thinkpro.domain.BillStatus;
+import com.gr25.thinkpro.domain.dto.request.BillInfo;
 import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
+import com.gr25.thinkpro.domain.dto.request.PaymentInfoResponse;
 import com.gr25.thinkpro.domain.entity.*;
 import com.gr25.thinkpro.repository.*;
 import com.gr25.thinkpro.service.CheckoutService;
@@ -9,10 +11,10 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,10 +39,27 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 
     @Override
-    public List<Bill> fetchOrderByUser(Customer currentUser) {
+    public List<BillInfo> fetchOrderByUser(Customer currentUser) {
         List<Bill> bills = billRepository.findByCustomer(currentUser);
-        Collections.reverse(bills);
-        return bills;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        List<BillInfo> billInfos = new ArrayList<>();
+        bills.forEach(bill -> {
+            BillInfo billInfo = new BillInfo();
+            billInfo.setBillDetails(bill.getBillDetails());
+            billInfo.setCreatedDate(bill.getCreatedDate().format(formatter));
+            billInfo.setBillId(bill.getBillId());
+            billInfo.setFeeShip(bill.getFeeShip());
+            billInfo.setCustomer(bill.getCustomer());
+            billInfo.setTotal(bill.getTotal());
+            billInfo.setPaymentMethod(bill.getPaymentMethod());
+            billInfo.setStatus(bill.getStatus());
+            billInfo.setReceiverName(bill.getReceiverName());
+            billInfo.setReceiverPhone(bill.getReceiverPhone());
+            billInfo.setReceiverAddress(bill.getReceiverAddress());
+            billInfos.add(billInfo);
+        });
+        Collections.reverse(billInfos);
+        return billInfos;
     }
 
     @Override
@@ -54,8 +73,8 @@ public class CheckoutServiceImpl implements CheckoutService {
     public PaymentInfo getPaymentInfo() {
         PaymentInfo paymentInfo = new PaymentInfo();
         paymentInfo.setAccountName("DO THANH VINH");
-        paymentInfo.setBankId("TPB");
-        paymentInfo.setAccountNo("00006362453");
+        paymentInfo.setBankId("MB");
+        paymentInfo.setAccountNo("25112000003");
         paymentInfo.setDescription("KHACH HANG THINKPRO CHUYEN KHOAN");
         return paymentInfo;
     }
@@ -82,7 +101,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 order.setFeeShip(0L);
                 order.setCreatedDate(LocalDateTime.now());
                 order.setLastModifiedDate(LocalDateTime.now());
-                order.setStatus(BillStatus.PENDING);
+                order.setStatus(BillStatus.WAITING);
 
                 long sum = 0;
                 for (CartDetail cd : cartDetails) {
