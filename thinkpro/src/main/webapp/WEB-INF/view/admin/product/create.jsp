@@ -75,17 +75,26 @@
                                     <label>Số lượng</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <form:input class="form-control" path="category.name" placeholder="Danh mục"/>
-                                    <c:if test="${not empty errorCate}">
+                                    <label class="form-label">Chọn hình ảnh</label>
+                                    <c:forEach var="imageIndex" begin="0" end="4"> <!-- Giới hạn số lượng hình ảnh -->
+                                        <input type="file" name="imageFiles" accept="image/*" class="form-control mb-2"/> <!-- Đây là trường nhập hình ảnh -->
+                                    </c:forEach>
+                                    <c:if test="${not empty errorImage}">
                                         <div class="mt-1 text-danger align-content-center">
-                                            <span class="">${errorCate}</span>
+                                            <span class="">${errorImage}</span>
                                         </div>
                                     </c:if>
-<%--                                    <c:if test="${not empty errorlastCate}">--%>
-<%--                                        <div class="mt-1 text-danger align-content-center">--%>
-<%--                                            <span class="">${errorlastCate}</span>--%>
-<%--                                        </div>--%>
-<%--                                    </c:if>--%>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <form:select class="form-control" path="category.name" placeholder="Danh mục">
+                                        <c:forEach var="Cate" items="${categories}">
+                                            <form:option value="${Cate.name}">
+                                                ${Cate.name}
+                                            </form:option>
+                                        </c:forEach>
+                                    </form:select>
+
                                     <label>Danh mục</label>
                                 </div>
                                 <div class="d-flex justify-content-center">

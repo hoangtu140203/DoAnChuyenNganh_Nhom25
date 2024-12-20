@@ -45,7 +45,7 @@ public class Product extends DateAuditing implements Serializable {
     @OneToMany(mappedBy = "product")
     List<BillDetail> billDetails;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
     List<Image> images;
 
     @ManyToOne
