@@ -1,6 +1,7 @@
 package com.gr25.thinkpro.controller.client;
 
 import com.gr25.thinkpro.domain.dto.request.FeedbackRequestDto;
+import com.gr25.thinkpro.domain.dto.request.BillInfo;
 import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
 import com.gr25.thinkpro.domain.entity.*;
 
@@ -90,7 +91,7 @@ public class CheckoutController {
         long id = (long) session.getAttribute("id");
         currentUser.setCustomerId(id);
 
-        List<Bill> orders = checkoutService.fetchOrderByUser(currentUser);
+        List<BillInfo> orders = checkoutService.fetchOrderByUser(currentUser);
         model.addAttribute("orders", orders);
 
         return "client/cart/order-history";

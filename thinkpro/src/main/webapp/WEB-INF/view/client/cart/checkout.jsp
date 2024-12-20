@@ -139,7 +139,7 @@
                                 </table>
                             </div>
                             <c:if test="${not empty cartDetails}">
-                                <form:form action="/place-order" method="post" modelAttribute="cart">
+                                <form:form id="formSubmit" action="/place-order" method="post" modelAttribute="cart">
                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                                     <div class="mt-5 row g-4 justify-content-start">
                                         <div class="col-12 col-md-6">
@@ -226,12 +226,13 @@
                                                     <div id="qrCodeContainer" class="mt-3 text-center" style="display: none;">
                                                         <h6 class="mb-3">Mã QR Thanh toán Chuyển khoản</h6>
                                                         <img id="qrImage" src="" alt="Mã QR" class="img-fluid mx-auto d-block" />
-                                                        <p class="mt-2">Quét mã để thực hiện thanh toán chuyển khoản.</p>
+                                                        <p class="mb-1">Quét mã để thực hiện thanh toán chuyển khoản.</p>
+                                                        <p>Vui lòng nhập đúng số tiền thanh toán.</p>
                                                     </div>
                                                 </div>
 
                                                 <div class="center-btn-container">
-                                                    <button id="confirmPaymentBtn"
+                                                    <button id="confirmPaymentBtn" onclick=""
                                                             class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4 ">
                                                         Xác nhận thanh toán
                                                     </button>
@@ -263,9 +264,60 @@
                     <script src="/client/lib/waypoints/waypoints.min.js"></script>
                     <script src="/client/lib/lightbox/js/lightbox.min.js"></script>
                     <script src="/client/lib/owlcarousel/owl.carousel.min.js"></script>
+                    <!-- Thêm jQuery -->
+                    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+                    <!-- Thêm jquery-toast-plugin -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
 
                     <!-- Template Javascript -->
                     <script src="/client/js/main.js"></script>
+
+                    <script>
+                        document.getElementById("formSubmit").addEventListener("submit", async function (event)  {
+                            event.preventDefault();
+                            if (document.getElementById('paymentMethod').value === 'BANK') {
+                                try {
+                                    const Api_key = "AK_CS.eac199c0be6711ef9cf3ed0b3d7702f1.lzTXPJcinuXYR4MfEyNVqiJFUO9nobnhMhCLyuibn1E8mv2LOCPQ82g9hP3jm2dlmJP8qHWk"
+                                    const api_get = "https://oauth.casso.vn/v2/transactions?pageSize=100"
+                                    const response = await fetch(api_get, {
+                                        headers: {
+                                            Authorization: `apikey ` + Api_key,
+                                            "Content-Type": "application/json",
+                                        },
+                                    })
+                                    const data = await response.json();
+                                    const lastPaid = data.data.records[data.data.records.length - 1];
+                                    const lastPrice = lastPaid["amount"];
+                                    const totalPriceElement = document.getElementById('totalPriceDisplay');
+
+                                    // Lấy giá trị của thuộc tính `data-cart-total-price`
+                                    const totalPrice = totalPriceElement.dataset.cartTotalPrice;
+                                    if(lastPrice == totalPrice) {
+                                        event.target.submit();
+                                    } else {
+                                        $.toast({
+                                            heading: 'Thanh toán',
+                                            text: 'Thanh toán không thành công',
+                                            position: 'top-right',
+                                            icon: 'error'
+                                        })
+                                    }
+                                } catch (e) {
+                                    $.toast({
+                                        heading: 'Thanh toán',
+                                        text: 'Thanh toán không thành công',
+                                        position: 'top-right',
+                                        icon: 'error'
+                                    })
+                                }
+                            } else {
+                                event.target.submit();
+                            }
+
+                        });
+                    </script>
                     <script>
                         const input = document.getElementById('receiverPhone');
                         input.addEventListener('keydown', function (event) {
@@ -288,7 +340,7 @@
                                         const totalPrice = totalPriceElement.dataset.cartTotalPrice;
                                         // console.log(totalPrice);
                                         // Cập nhật các trường thông tin
-                                        document.getElementById('bankId').value = "TP BANK";
+                                        document.getElementById('bankId').value = "MB BANK";
                                         document.getElementById('accountNo').value = data.accountNo;
                                         document.getElementById('amountBank').value = new Intl.NumberFormat('vi-VN').format(totalPrice);
                                         document.getElementById('descriptionBank').value = data.description;

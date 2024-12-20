@@ -1,6 +1,7 @@
 package com.gr25.thinkpro.service;
 
 
+import com.gr25.thinkpro.domain.dto.request.BillInfo;
 import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
 import com.gr25.thinkpro.domain.entity.Bill;
 
@@ -18,7 +19,7 @@ public interface CheckoutService {
     void handleUpdateCartBeforeCheckout(List<CartDetail> cartDetails);
 
 
-    List<Bill> fetchOrderByUser(Customer currentUser);
+    List<BillInfo> fetchOrderByUser(Customer currentUser);
 
     void cancelBill(String email, long oderId, HttpSession session, int i);
 

@@ -420,12 +420,22 @@
 
             },
             error: function (response) {
-                $.toast({
-                    heading: 'Giỏ hàng',
-                    text: response.responseText,
-                    position: 'top-right',
-                    icon: 'error'
-                })
+                if(response.responseText === "ERROR_CART") {
+                    $.toast({
+                        heading: 'Giỏ hàng',
+                        text: "Số lượng sản phẩm không đủ để thêm vào giỏ hàng, vui lòng nhập lại số lượng!",
+                        position: 'top-right',
+                        icon: 'error'
+                    })
+                }
+                else {
+                    $.toast({
+                        heading: 'Giỏ hàng',
+                        text: "Lỗi hệ thống",
+                        position: 'top-right',
+                        icon: 'error'
+                    })
+                }
                 console.log("error: ", response);
             }
 

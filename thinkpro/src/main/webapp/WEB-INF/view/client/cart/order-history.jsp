@@ -100,7 +100,8 @@
                 </c:if>
                 <c:forEach var="order" items="${orders}">
                     <tr>
-                        <td colspan="2">Đơn hàng</td>
+                        <td colspan="2" id="orderDate">Đơn hàng ngày ${order.createdDate}</td>
+                        <td colspan="2"></td>
                         <td colspan="1">
                             <fmt:formatNumber type="number" value="${order.total}"/>
                             đ
@@ -108,10 +109,10 @@
                         <td colspan="2"></td>
                         <td colspan="1">
                             <c:if test="${order.status == 'PENDING'}">
-                                Đơn hàng chưa được xác nhận
+                                Đơn hàng đang được giao
                             </c:if>
                             <c:if test="${order.status == 'WAITING'}">
-                                Đơn hàng đang được giao
+                                Đơn hàng chưa được xác nhận
                             </c:if>
                             <c:if test="${order.status == 'CONFIRMED'}">
                                 Đơn hàng đã được xác nhận
@@ -124,18 +125,15 @@
                             </c:if>
                         </td>
                         <td colspan="1">
-                            <c:if test="${order.status == 'PENDING'}">
-                                <form method="post" action="/cancel-bill/${order.billId}"
-                                      style="margin: 0px; display: inline-block;">
+                            <c:if test="${order.status == 'WAITING'}">
+                                <form method="post" action="/cancel-bill/${order.billId}" style="margin: 0px; display: inline-block;">
                                     <input type="hidden" name="${_csrf.parameterName}"
-                                           value="${_csrf.token}"/>
-                                    <button class="btn btn-md rounded-circle bg-light border mt-4"
-                                            style="width: 40px; height: 40px; margin: 1px;">
+                                           value="${_csrf.token}" />
+                                    <button class="btn btn-md rounded-circle bg-light border" style="width: 40px; height: 40px; margin: 1px;" >
                                         <i class="fa fa-times text-danger"></i>
                                     </button>
                                 </form>
                             </c:if>
-
                         </td>
                     </tr>
 
