@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.gr25.thinkpro.domain.entity.Cart;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -36,6 +37,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Product save(Product product);
 
     boolean existsByName(String name);
+
+    @Transactional
+    @Modifying
+    void deleteProductByProductId(long productId);
 
     @Query(value = """
         SELECT p.product_id, p.name, c.name AS category_name, p.price, 
