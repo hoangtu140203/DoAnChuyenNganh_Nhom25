@@ -52,7 +52,7 @@ public class CartController {
         long id = (long) session.getAttribute("id");
         currentUser.setCustomerId(id);
 
-        Cart cart = cartService.fetchByUser(currentUser);
+        Cart cart = cartService.fetchByUser(currentUser, session);
 
         List<CartDetail> cartDetails = cart == null ? new ArrayList<CartDetail>() : cart.getCartDetails();
 
@@ -87,5 +87,13 @@ public class CartController {
         cartService.handleAddProductToCart(email, productId, session, 1);
 
         return "redirect:/cart";
+    }
+
+    @GetMapping("api/cart/sum")
+    public ResponseEntity<Integer> getCartSum(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        String email = (String) session.getAttribute("email");
+        int sum = cartService.getCartSum(email, session);
+        return ResponseEntity.ok().body(sum);
     }
 }

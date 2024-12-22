@@ -27,8 +27,6 @@ public class Product extends DateAuditing implements Serializable {
 
     private String name;
 
-    @NotNull
-    @Min(value = 1, message = "Số lượng cần lớn hơn hoặc bằng 1")
     private long quantity;
 
     private String description;

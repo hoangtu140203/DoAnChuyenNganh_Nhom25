@@ -184,7 +184,7 @@
                                                     <div class="d-flex justify-content-between">
                                                         <h5 class="mb-0 me-4">Phí vận chuyển</h5>
                                                         <div class="">
-                                                            <p class="mb-0">0 đ</p>
+                                                            <p class="mb-0">30,000 đ</p>
                                                         </div>
                                                     </div>
                                                     <div class="mt-3 d-flex justify-content-between">

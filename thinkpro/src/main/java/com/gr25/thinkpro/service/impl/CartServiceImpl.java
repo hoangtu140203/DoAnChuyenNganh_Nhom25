@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -93,8 +91,10 @@ public class CartServiceImpl implements CartService {
         }
     }
 
-    public Cart fetchByUser(Customer user) {
-        return cartRepository.findByCustomer(user);
+    public Cart fetchByUser(Customer user, HttpSession session) {
+        Cart cart = cartRepository.findByCustomer(user);
+        session.setAttribute("sum", cart.getCartDetails().size());
+        return cart;
     }
 
     public void handleRemoveCartDetail(long cartDetailId, HttpSession session) {
@@ -119,5 +119,13 @@ public class CartServiceImpl implements CartService {
                 session.setAttribute("sum", 0);
             }
         }
+    }
+
+    @Override
+    public int getCartSum(String email, HttpSession session) {
+        Customer user = customerRepository.findByEmail(email);
+        Cart cart = cartRepository.findByCustomer(user);
+        session.setAttribute("sum", cart.getCartDetails().size());
+        return cart.getCartDetails().size();
     }
 }
