@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CartService {
     void handleAddProductToCart(String email, long productId, HttpSession session, long quantity);
 
-    Cart fetchByUser(Customer currentUser);
+    Cart fetchByUser(Customer currentUser, HttpSession session);
 
     void handleRemoveCartDetail(long cartDetailId, HttpSession session);
+
+    int getCartSum(String email, HttpSession session);
 }

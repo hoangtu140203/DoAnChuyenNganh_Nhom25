@@ -170,7 +170,12 @@
             const max = parseInt(input.attr('max'))
             // console.log(max);
             if (parseFloat(oldValue) + 1 > max) {
-                alert("Bạn đã vượt quá số lượng")
+                $.toast({
+                    heading: 'Giỏ hàng',
+                    text: 'Vượt quá số lượng sản phẩm!',
+                    position: 'top-right',
+                    icon: 'error'
+                })
                 var newVal = max;
             } else {
                 var newVal = parseFloat(oldValue) + 1;
@@ -450,6 +455,24 @@
         }
         return true;
     }
+
+    $(document).ready(function() {
+        const token = $("meta[name='_csrf']").attr("content");
+        const header = $("meta[name='_csrf_header']").attr("content");
+        $.ajax({
+            url: `/api/cart/sum`, // URL đến API của bạn
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(header, token);
+            },
+            method: 'GET',
+            success: function(data) {
+                $('#sumCart').text(+data); // Cập nhật nội dung của phần tử có id là sumCart
+            },
+            error: function(err) {
+                console.error('Lỗi khi gọi API:', err);
+            }
+        });
+    });
 
 })(jQuery);
 

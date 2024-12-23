@@ -3,7 +3,6 @@ package com.gr25.thinkpro.controller.client;
 import com.gr25.thinkpro.domain.dto.request.FeedbackRequestDto;
 import com.gr25.thinkpro.domain.dto.request.BillInfo;
 import com.gr25.thinkpro.domain.dto.request.PaymentInfo;
-import com.gr25.thinkpro.domain.entity.*;
 
 import com.gr25.thinkpro.domain.entity.Cart;
 import com.gr25.thinkpro.domain.entity.CartDetail;
@@ -38,11 +37,11 @@ public class CheckoutController {
         long id = (long) session.getAttribute("id");
         currentUser.setCustomerId(id);
 
-        Cart cart = cartService.fetchByUser(currentUser);
+        Cart cart = cartService.fetchByUser(currentUser, session);
 
         List<CartDetail> cartDetails = cart == null ? new ArrayList<CartDetail>() : cart.getCartDetails();
 
-        double totalPrice = 0;
+        double totalPrice = 30000;
         for (CartDetail cd : cartDetails) {
             Product product = cd.getProduct();
             totalPrice += product.getPrice() * cd.getQuantity();

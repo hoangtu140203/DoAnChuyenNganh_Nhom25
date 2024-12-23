@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,10 @@ public class CheckoutServiceImpl implements CheckoutService {
             Optional<CartDetail> cdOptional = cartDetailRepository.findById(cartDetail.getId());
             if (cdOptional.isPresent()) {
                 CartDetail currentCartDetail = cdOptional.get();
+                Product product = currentCartDetail.getProduct();
+                if (product.getQuantity() < cartDetail.getQuantity()) {
+                    throw new RuntimeException("ERROR_CHECKOUT");
+                }
                 currentCartDetail.setQuantity(cartDetail.getQuantity());
                 cartDetailRepository.save(currentCartDetail);
             }
@@ -98,12 +103,12 @@ public class CheckoutServiceImpl implements CheckoutService {
                 order.setReceiverAddress(receiverAddress);
                 order.setReceiverPhone(receiverPhone);
                 order.setPaymentMethod(paymentMethod);
-                order.setFeeShip(0L);
+                order.setFeeShip(30000L);
                 order.setCreatedDate(LocalDateTime.now());
                 order.setLastModifiedDate(LocalDateTime.now());
                 order.setStatus(BillStatus.WAITING);
 
-                long sum = 0;
+                long sum = 30000;
                 for (CartDetail cd : cartDetails) {
                     sum += cd.getProduct().getPrice();
                 }
@@ -112,19 +117,35 @@ public class CheckoutServiceImpl implements CheckoutService {
 
                 // create orderDetail
 
+
                 for (CartDetail cd : cartDetails) {
                     BillDetail orderDetail = new BillDetail();
+                    Product product = cd.getProduct();
                     orderDetail.setBill(order);
                     orderDetail.setProduct(cd.getProduct());
                     orderDetail.setPrice(cd.getProduct().getPrice());
                     orderDetail.setQuantity(cd.getQuantity());
+                    product.setQuantity(product.getQuantity()- cd.getQuantity());
                     orderDetail.setCreatedDate(LocalDateTime.now());
                     orderDetail.setLastModifiedDate(LocalDateTime.now());
                     billDetailRepository.save(orderDetail);
+                    productRepository.save(product);
+
                 }
 
                 // step 2: delete cart_detail and cart
                 for (CartDetail cd : cartDetails) {
+                    List<CartDetail> cartDetails1 = cartDetailRepository.findByProduct(cd.getProduct());
+                    if (cd.getProduct().getQuantity() == 0) {
+                        cartDetailRepository.deleteAllById(cartDetails1.stream().map(CartDetail::getId).collect(Collectors.toList()));
+                    } else {
+                        cartDetails1.forEach(cartDetail -> {
+                            if (cartDetail.getQuantity() > cd.getProduct().getQuantity()) {
+                                cartDetail.setQuantity(cd.getProduct().getQuantity());
+                            }
+                        });
+                        cartDetailRepository.saveAll(cartDetails1);
+                    }
                     cartDetailRepository.deleteById(cd.getId());
                 }
 

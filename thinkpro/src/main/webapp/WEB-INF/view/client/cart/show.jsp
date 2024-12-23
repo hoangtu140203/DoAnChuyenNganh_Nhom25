@@ -119,14 +119,26 @@
                                                                 <i class="fa fa-minus"></i>
                                                             </button>
                                                         </div>
-                                                        <input type="number"
-                                                               class="form-control form-control-sm text-center border-0"
-                                                               value="${cartDetail.quantity}"
-                                                               min="1"
-                                                               max="${cartDetail.product.quantity}"
-                                                               data-cart-detail-id="${cartDetail.id}"
-                                                               data-cart-detail-price="${cartDetail.product.price}"
-                                                               data-cart-detail-index="${status.index}">
+                                                        <c:if test="${cartDetail.quantity <= cartDetail.product.quantity}">
+                                                            <input type="number" id="inputField"
+                                                                   class="form-control form-control-sm text-center border-0"
+                                                                   value="${cartDetail.quantity}"
+                                                                   min="1"
+                                                                   max="${cartDetail.product.quantity}"
+                                                                   data-cart-detail-id="${cartDetail.id}"
+                                                                   data-cart-detail-price="${cartDetail.product.price}"
+                                                                   data-cart-detail-index="${status.index}">
+                                                        </c:if>
+                                                        <c:if test="${cartDetail.quantity > cartDetail.product.quantity}">
+                                                            <input type="number" id="inputField"
+                                                                   class="form-control form-control-sm text-center border-0"
+                                                                   value="${cartDetail.product.quantity}"
+                                                                   min="1"
+                                                                   max="${cartDetail.product.quantity}"
+                                                                   data-cart-detail-id="${cartDetail.id}"
+                                                                   data-cart-detail-price="${cartDetail.product.price}"
+                                                                   data-cart-detail-index="${status.index}">
+                                                        </c:if>
                                                         <div class="input-group-btn">
                                                             <button class="btn btn-sm btn-plus rounded-circle bg-light border">
                                                                 <i class="fa fa-plus"></i>
@@ -173,18 +185,18 @@
                                                 <div class="d-flex justify-content-between">
                                                     <h5 class="mb-0 me-4">Phí vận chuyển</h5>
                                                     <div class="">
-                                                        <p class="mb-0">0 đ</p>
+                                                        <p class="mb-0">30,000 đ</p>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div
                                                 class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
                                                 <h5 class="mb-0 ps-4 me-4">Tổng số tiền</h5>
-                                                <p class="mb-0 pe-4" data-cart-total-price="${totalPrice}">
-                                                    <fmt:formatNumber type="number" value="${totalPrice}" /> đ
+                                                <p class="mb-0 pe-4" data-cart-total-price-free="${totalPrice+30000}">
+                                                    <fmt:formatNumber type="number" value="${totalPrice+30000}" /> đ
                                                 </p>
                                             </div>
-                                            <form:form action="/confirm-checkout" method="post" modelAttribute="cart">
+                                            <form:form action="/confirm-checkout" method="post" modelAttribute="cart" id="submitConfirm">
                                                 <input type="hidden" name="${_csrf.parameterName}"
                                                     value="${_csrf.token}" />
                                                 <div style="display: none;">
@@ -206,7 +218,7 @@
                                                         </div>
                                                     </c:forEach>
                                                 </div>
-                                                <button
+                                                <button id="btn-confirm"
                                                     class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4">Xác
                                                     nhận thanh toán
                                                 </button>
@@ -236,37 +248,71 @@
                     <script src="/client/lib/lightbox/js/lightbox.min.js"></script>
                     <script src="/client/lib/owlcarousel/owl.carousel.min.js"></script>
 
-                    <!-- Template Javascript -->
-<%--                    <script>--%>
-<%--                        document.querySelectorAll('.btn-plus').forEach(button => {--%>
-<%--                            button.addEventListener('click', function () {--%>
-<%--                                const input = this.closest('.input-group').querySelector('input[type="number"]');--%>
-<%--                                const max = parseInt(input.getAttribute('max'));--%>
-<%--                                const currentValue = parseInt(input.value);--%>
-<%--                                if (currentValue < max) {--%>
-<%--                                    input.value = currentValue + 1;--%>
-<%--                                } else {--%>
-<%--                                    alert('Không thể tăng thêm, đã đạt số lượng tối đa!');--%>
-<%--                                }--%>
-<%--                                input.value(max);--%>
-<%--                            });--%>
-<%--                        });--%>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
 
-<%--                        document.querySelectorAll('.btn-minus').forEach(button => {--%>
-<%--                            button.addEventListener('click', function () {--%>
-<%--                                const input = this.closest('.input-group').querySelector('input[type="number"]');--%>
-<%--                                const min = parseInt(input.getAttribute('min')) || 0;--%>
-<%--                                const currentValue = parseInt(input.value);--%>
 
-<%--                                if (currentValue > min) {--%>
-<%--                                    input.value = currentValue - 1;--%>
-<%--                                } else {--%>
-<%--                                    alert('Không thể giảm thêm, đã đạt số lượng tối thiểu!');--%>
-<%--                                }--%>
-<%--                            });--%>
-<%--                        });--%>
-<%--                    </script>--%>
                     <script src="/client/js/main.js"></script>
+                    <script>
+                        document.getElementById("inputField").addEventListener("input", function (e) {
+                            const max = parseInt(this.max, 10);
+                            const value = parseInt(this.value, 10);
+
+                            if (value > max) {
+                                this.value = max; // Giới hạn giá trị nhập lại
+                            }
+                            const index = this.getAttribute("data-cart-detail-index")
+                            const el = document.getElementById(`cartDetails`+ index + `.quantity`);
+                            $(el).val(this.value);
+
+
+
+                            //get price
+                            const price = this.getAttribute("data-cart-detail-price");
+                            const priceTmp = this.value * price;
+                            const id = this.getAttribute("data-cart-detail-id");
+
+                            const priceElement = $(`p[data-cart-detail-id=`+`'`+ id +`']`);
+                            if (priceElement) {
+                                const newPrice = +price * this.value;
+                                priceElement.text(formatCurrency(newPrice.toFixed(2)) + " đ");
+                            }
+
+                            //update total cart price
+                            const totalPriceElement = $(`p[data-cart-total-price]`);
+
+                            const totalPriceElement2 = $(`p[data-cart-total-price-free]`);
+
+                            if (totalPriceElement && totalPriceElement.length) {
+                                $(totalPriceElement[0]).text(formatCurrency(priceTmp.toFixed(2)) + " đ");
+                                $(totalPriceElement2[0]).text(formatCurrency((priceTmp + 30000).toFixed(2)) + " đ");
+                                $(totalPriceElement[0]).attr("data-cart-total-price", priceTmp);
+                                //update data-attribute
+                                $(totalPriceElement2[0]).attr("data-cart-total-price-free", priceTmp + 30000);
+                            }
+                        });
+                            function formatCurrency(value) {
+                                // Use the 'vi-VN' locale to format the number according to Vietnamese currency format
+                                // and 'VND' as the currency type for Vietnamese đồng
+                                const formatter = new Intl.NumberFormat('vi-VN', {
+                                    style: 'decimal',
+                                    minimumFractionDigits: 0, // No decimal part for whole numbers
+                                });
+
+                                let formatted = formatter.format(value);
+                                // Replace dots with commas for thousands separator
+                                formatted = formatted.replace(/\./g, ',');
+                                return formatted;
+                            }
+                        document.getElementById("submitConfirm").addEventListener("submit", async function (event) {
+                            event.preventDefault();
+                            try {
+                                event.target.submit();
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        });
+                    </script>
                 </body>
 
                 </html>
