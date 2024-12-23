@@ -23,12 +23,16 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findAll();
 
     Customer findCustomerByCustomerId(long customerId);
+
     Customer findCustomerByName(String name);
     @Transactional
     @Modifying
     void deleteCustomerByCustomerId(long customerId);
 
-    Page<Customer> findByNameContaining(String customerId, Pageable pageable);
+    Page<Customer> findByNameContaining(String name, Pageable pageable);
+    Page<Customer> findCustomerByRoleRoleId(Long customerId, Pageable pageable);
+    Page<Customer> findCustomersByNameAndRoleRoleId(String name, Long customerId, Pageable pageable);
+
     Customer save(Customer customer);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);

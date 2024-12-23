@@ -40,15 +40,20 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Page<Customer> findAll(Pageable page) {
-        return this.customerRepository.findAll(page);
-    }
-    public Page<Customer> findCustomersByName(String name, Pageable page) {
+    public Page<Customer> findCustomersByName(String name,Pageable page) {
         return this.customerRepository.findByNameContaining(name,page);
+    }
+    public Page<Customer> findCustomersById(Long id,Pageable page) {
+        return this.customerRepository.findCustomerByRoleRoleId(id,page);
     }
     public Customer getCustomerByName(String name) {
         return this.customerRepository.findCustomerByName(name);
     }
+
+    public Page<Customer> findCustomersByNameAndRoleId(String name, Long roleId, Pageable pageable) {
+        return this.customerRepository.findCustomersByNameAndRoleRoleId(name,roleId,pageable);
+    }
+
     public Customer getCustomerById(long id) {
         return customerRepository.findCustomerByCustomerId(id);
     }

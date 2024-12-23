@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class  AdminPageController {
     @GetMapping("/admin/user")
     public String getAdminUserPage(Model model,@RequestParam("page") Optional<String> page) {
         int pageNum = 1;
+
         try {
             if(page.isPresent()) {
                 pageNum = Integer.parseInt(page.get());
@@ -31,8 +33,10 @@ public class  AdminPageController {
         catch (Exception e) {
 
         }
+
+        long id=2;
         Pageable pageable = PageRequest.of(pageNum-1, 4);
-        Page<Customer> customerPage =this.customerService.findAll(pageable);
+        Page<Customer> customerPage =this.customerService.findCustomersById(id,pageable);
         List<Customer> users = customerPage.getContent();
 
         model.addAttribute("users",users);
@@ -42,24 +46,30 @@ public class  AdminPageController {
         return "admin/user/show";
     }
 
-    @PostMapping("/admin/user")
-    public String searchCustomerPage(Model model,@ModelAttribute("newUser") Customer customer
-            ,@RequestParam("page") Optional<String> page) {
 
-        Customer customer1 = this.customerService.getCustomerByName(customer.getName());
+    @PostMapping("/admin/user")
+    public String searchCustomerPage(Model model, @ModelAttribute("newUser") Customer customer,
+                                     @RequestParam("page") Optional<String> page) {
+
+        String name = customer.getName();
         Page<Customer> customerPage;
 
         int pageNum = 1;
+
         try {
             if(page.isPresent()) {
                 pageNum = Integer.parseInt(page.get());
             }
-        }catch (Exception e) {}
-        Pageable pageable = PageRequest.of(pageNum-1, 4);
-        if (customer1 != null) {
-            customerPage = this.customerService.findCustomersByName(customer1.getName(),pageable);
+        }
+        catch (Exception e) {
+
+        }
+        Pageable pageable = PageRequest.of(pageNum - 1, 4);
+
+        if (StringUtils.hasText(name)) {
+            customerPage = customerService.findCustomersByNameAndRoleId(name, 2L, pageable);
         } else {
-            customerPage = this.customerService.findAll(pageable);
+            customerPage = customerService.findCustomersById(2L, pageable);
         }
 
         List<Customer> customers = customerPage.getContent();
@@ -69,6 +79,45 @@ public class  AdminPageController {
         model.addAttribute("totalPages", customerPage.getTotalPages());
         return "admin/user/show";
     }
+//    @PostMapping("/admin/user")
+//    public String searchCustomerPage(Model model,@ModelAttribute("newUser") Customer customer
+//            ,@RequestParam("page") Optional<String> page) {
+//
+//        List<Customer> cus=this.customerService.getCustomers();
+//        String name = customer.getName();
+//        List<Customer> search = List.of(customer);
+//        Customer customer1 = this.customerService.getCustomerByName(customer.getName());
+//
+//
+//        Page<Customer> customerPage;
+//        int pageNum = 1;
+//        long id=2;
+//        try {
+//            if(page.isPresent()) {
+//                pageNum = Integer.parseInt(page.get());
+//            }
+//        }catch (Exception e) {}
+//        Pageable pageable = PageRequest.of(pageNum-1, 4);
+//
+//        for(Customer c:cus) {
+//            if(c.getName().equals(name) && c.getRole().getRoleId()==2) {
+//                search.add(c);
+//            }
+//        }
+//        if (customer1 != null && customer1.getRole().getRoleId()==2) {
+//            customerPage = (Page<Customer>) search;
+//        } else {
+//            customerPage = this.customerService.findCustomersById(id,pageable);;
+//
+//        }
+//
+//        List<Customer> customers = customerPage.getContent();
+//
+//        model.addAttribute("users", customers);
+//        model.addAttribute("currentPage", pageNum);
+//        model.addAttribute("totalPages", customerPage.getTotalPages());
+//        return "admin/user/show";
+//    }
 
     @GetMapping("/admin/user/{Id}")
     public String getAdminUserViewPage(Model model, @PathVariable("Id") Long id) {
