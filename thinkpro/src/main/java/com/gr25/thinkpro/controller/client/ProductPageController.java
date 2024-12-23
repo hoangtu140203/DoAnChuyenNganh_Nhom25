@@ -8,21 +8,24 @@ import com.gr25.thinkpro.service.CategoryService;
 import com.gr25.thinkpro.service.CustomerService;
 import com.gr25.thinkpro.service.ImageService;
 import com.gr25.thinkpro.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ProductPageController {
@@ -59,9 +62,12 @@ public class ProductPageController {
 
 
     @PostMapping("/admin/product/create")
-    public String createProduct(Model model,@ModelAttribute("newProduct") Product product,
-                                @RequestParam("imageFiles") List<Image> images,RedirectAttributes redirectAttributes) {
-
+    public String createProduct(Model model,
+                                @ModelAttribute("newProduct") Product product,
+                                @RequestParam("imageFiles") List<MultipartFile> imageFiles,
+                                RedirectAttributes redirectAttributes) {
+        log.info("Received product: {}", product);
+        log.info("Received images: {}", imageFiles);
         Category categoryName = categoryService.getCategoryByName(product.getCategory().getName());
 
         List<Category> categories = this.categoryService.getCategories();
@@ -82,15 +88,14 @@ public class ProductPageController {
 
 
 
-        for (Image image : images) {
-
-            imageService.saveImage(image);
+        for (MultipartFile file : imageFiles) {
+            if (!file.isEmpty()) {
+                Image image = new Image();
+                image.setName(file.getOriginalFilename());
+                // Lưu ảnh vào cơ sở dữ liệu hoặc thư mục
+                imageService.saveImage(image);
+            }
         }
-
-
-
-
-
 
         return "redirect:/admin/product";
     }

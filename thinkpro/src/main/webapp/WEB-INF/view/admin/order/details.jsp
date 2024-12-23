@@ -50,44 +50,44 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:if test="${empty orderDetails}">
+                                    <c:if test="${empty billDetails}">
                                         <tr>
                                             <td colspan="5">Không có sản phẩm trong đơn hàng này.</td>
                                         </tr>
                                     </c:if>
 
-                                    <c:forEach var="orderDetail" items="${orderDetails}">
+                                    <c:forEach var="orderDetail" items="${billDetails}">
                                         <tr>
                                             <th scope="row">
                                                 <div class="d-flex align-items-center">
-                                                    <img src="/images/product/${orderDetail.product.images[0].url}"
+                                                    <img src="/images/product/${billDetaill.product.images[0].url}"
                                                          class="img-fluid me-5 rounded-circle"
                                                          style="width: 80px; height: 80px;" alt="Ảnh sản phẩm">
                                                 </div>
                                             </th>
                                             <td>
                                                 <p class="mb-0 mt-4">
-                                                    <a href="/product/${orderDetail.product.productId}" target="_blank">
-                                                            ${orderDetail.product.name}
+                                                    <a href="/product/${billDetail.product.productId}" target="_blank">
+                                                            ${billDetail.product.name}
                                                     </a>
                                                 </p>
                                             </td>
                                             <td>
                                                 <p class="mb-0 mt-4">
-                                                    <fmt:formatNumber type="number" value="${orderDetail.price}" /> đ
+                                                    <fmt:formatNumber type="number" value="${billDetail.price}" /> đ
                                                 </p>
                                             </td>
                                             <td>
                                                 <div class="input-group quantity mt-4" style="width: 100px;">
                                                     <input type="text"
                                                            class="form-control form-control-sm text-center border-0"
-                                                           value="${orderDetail.quantity}" readonly>
+                                                           value="${billDetail.quantity}" readonly>
                                                 </div>
                                             </td>
                                             <td>
                                                 <p class="mb-0 mt-4">
                                                     <fmt:formatNumber type="number"
-                                                                      value="${orderDetail.price * orderDetail.quantity}" />
+                                                                      value="${billDetail.price * billDetail.quantity}" />
                                                     đ
                                                 </p>
                                             </td>

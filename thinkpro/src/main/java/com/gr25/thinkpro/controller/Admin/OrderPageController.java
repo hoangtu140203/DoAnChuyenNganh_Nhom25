@@ -57,6 +57,7 @@ public class OrderPageController {
         model.addAttribute("order", order);
         return "admin/order/details";
     }
+
     @GetMapping("/admin/order/delete/{id}")
     public String getdeleteOrderPage(Model model, @PathVariable("id") long id) {
         model.addAttribute("id", id);

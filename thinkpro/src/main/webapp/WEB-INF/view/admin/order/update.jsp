@@ -63,9 +63,10 @@
                                     <label class="form-label">Trạng thái:</label>
                                     <form:select class="form-select" path="status">
                                         <form:option value="PENDING">Chưa giải quyết</form:option>
+                                        <form:option value="WAITING">Đang chờ giả quyết</form:option>
                                         <form:option value="SHIPPING">Đang vận chuyển</form:option>
-                                        <form:option value="COMPLETE">Hoàn thành</form:option>
-                                        <form:option value="CANCEL">Đã hủy</form:option>
+                                        <form:option value="COMPLETED">Hoàn thành</form:option>
+                                        <form:option value="CANCELLED">Đã hủy</form:option>
                                     </form:select>
                                 </div>
                                 <div class="col-12 mb-5">
