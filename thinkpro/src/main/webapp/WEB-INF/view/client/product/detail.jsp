@@ -131,10 +131,6 @@
                                 <i class="fa fa-star-half-alt text-secondary"></i>
                             </c:if>
 
-                            <!-- Empty stars -->
-                            <c:forEach var="i" begin="1" end="${emptyStars}">
-                                <i class="fa fa-star text-secondary"></i>
-                            </c:forEach>
                         </div>
 
 

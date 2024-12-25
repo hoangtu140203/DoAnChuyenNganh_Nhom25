@@ -14,7 +14,6 @@
             <button onclick="sendMessage()">Gửi</button>
         </div>
     </div>
-
     <button class="open-chat-btn" onclick="toggleChat()">💬</button>
 </div>
 <script src="/client/js/script_chatbot.js"></script>

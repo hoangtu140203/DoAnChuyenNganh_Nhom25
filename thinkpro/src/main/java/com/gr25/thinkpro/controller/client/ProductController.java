@@ -37,7 +37,7 @@ public class ProductController {
         PageRequest pageRequest = PageRequest.of(pageNum.get()-1, 2);
 
         Page<FeedBack> page = feedBackService.findByProductId(id, pageRequest);
-        float rate = feedBackService.getAvgRateByProductId(id).orElse(0.0f);
+        float rate = feedBackService.getAvgRateByProductId(id).orElse(5.0f);
         model.addAttribute("rate", rate);
         model.addAttribute("categories", categories);
         model.addAttribute("feedbacks", page.getContent());

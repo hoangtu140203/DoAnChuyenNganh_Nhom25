@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface FeedBackRepository extends JpaRepository<FeedBack, Long> {
 
-    @Query("SELECT AVG(f.rate) FROM Product p JOIN p.feedBacks f WHERE p.productId=?1")
+    @Query(value = "SELECT AVG(f.rate) FROM feedback f WHERE f.product_id=?1",nativeQuery = true)
     Optional<Float> getAvgRateByProductId(long productId);
 
     @Query(value = "SELECT f.* FROM products p INNER JOIN feedback f " +
