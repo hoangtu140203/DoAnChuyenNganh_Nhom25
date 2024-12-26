@@ -31,7 +31,7 @@
                                 <li class="breadcrumb-item active">Tạo sản phẩm</li>
                             </ol>
                             <hr />
-                            <form:form class="form p-3" action="/admin/product/create" method="post" modelAttribute="newProduct">
+                            <form:form class="form p-3" action="/admin/product/create" method="post" modelAttribute="newProduct" enctype="multipart/form-data">
                                 <!-- Name input -->
                                 <div class="form-floating mb-3">
                                     <form:input class="form-control" path="name" placeholder="Tên sản phẩm"/>

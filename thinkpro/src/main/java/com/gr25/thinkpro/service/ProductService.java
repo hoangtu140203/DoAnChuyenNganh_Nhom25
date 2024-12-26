@@ -11,14 +11,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService  {
+
     private final ProductRepository productRepository;
 
     public Page<Product> findProduct(ProductCriteriaDto productCriteriaDto,Pageable pageable) {
@@ -104,4 +107,29 @@ public class ProductService  {
     public void deleteProduct(long id) {
         productRepository.deleteProductByProductId(id);
     }
+
+
+    public Optional<Product> fetchProductById(long id) {
+        return productRepository.findById(id);
+    }
+
+    // Phương thức để cập nhật sản phẩm
+    @Transactional
+    public void updateProduct(Product product) {
+        Product existingProduct = productRepository.findById(product.getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Cập nhật các trường thông tin
+        existingProduct.setName(product.getName());
+        existingProduct.setQuantity(product.getQuantity());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setPrice(product.getPrice());
+        existingProduct.setDiscount(product.getDiscount());
+        existingProduct.setFinalPrice(); // Tính lại giá cuối cùng sau khi cập nhật
+
+        // Cập nhật các thông tin khác nếu cần
+        productRepository.save(existingProduct);  // Lưu lại vào DB
+    }
+
+    // Các phương thức khác (như save, delete...)
 }
+
