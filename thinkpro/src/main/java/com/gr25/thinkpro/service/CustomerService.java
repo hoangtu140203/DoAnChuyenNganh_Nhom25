@@ -3,7 +3,7 @@ package com.gr25.thinkpro.service;
 import com.gr25.thinkpro.domain.dto.request.RegisterRequestDto;
 import com.gr25.thinkpro.domain.entity.Cart;
 import com.gr25.thinkpro.domain.entity.Customer;
-import com.gr25.thinkpro.domain.entity.Role;
+
 import com.gr25.thinkpro.repository.CartRepository;
 import com.gr25.thinkpro.repository.CustomerRepository;
 import com.gr25.thinkpro.repository.RoleRepository;

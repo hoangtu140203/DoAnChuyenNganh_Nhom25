@@ -1,8 +1,8 @@
 package com.gr25.thinkpro.controller.Admin;
 
-import com.gr25.thinkpro.domain.entity.Category;
+
 import com.gr25.thinkpro.domain.entity.Customer;
-import com.gr25.thinkpro.domain.entity.Role;
+
 import com.gr25.thinkpro.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,7 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
