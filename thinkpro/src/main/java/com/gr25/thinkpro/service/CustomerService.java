@@ -43,7 +43,7 @@ public class CustomerService {
     public Page<Customer> findCustomersByName(String name,Pageable page) {
         return this.customerRepository.findByNameContaining(name,page);
     }
-    public Page<Customer> findCustomersById(Long id,Pageable page) {
+    public Page<Customer> findCustomersByRoleId(Long id,Pageable page) {
         return this.customerRepository.findCustomerByRoleRoleId(id,page);
     }
     public Customer getCustomerByName(String name) {

@@ -2,6 +2,7 @@ package com.gr25.thinkpro.controller.Admin;
 
 import com.gr25.thinkpro.domain.entity.Category;
 import com.gr25.thinkpro.domain.entity.Customer;
+import com.gr25.thinkpro.domain.entity.Role;
 import com.gr25.thinkpro.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,8 +37,16 @@ public class  AdminPageController {
 
         long id=2;
         Pageable pageable = PageRequest.of(pageNum-1, 4);
-        Page<Customer> customerPage =this.customerService.findCustomersById(id,pageable);
+        Page<Customer> customerPage =this.customerService.findCustomersByRoleId(id,pageable);
         List<Customer> users = customerPage.getContent();
+
+        users.forEach(customer -> {
+            String role = customer.getRole().getRoleName();
+            if(role.equals("ROLE_USER")) {
+                customer.getRole().setRoleName("Người dùng");
+            }
+        });
+
 
         model.addAttribute("users",users);
         model.addAttribute("currentPage", pageNum);
@@ -53,7 +62,7 @@ public class  AdminPageController {
 
         String name = customer.getName();
         Page<Customer> customerPage;
-
+        long id=2;
         int pageNum = 1;
 
         try {
@@ -66,58 +75,29 @@ public class  AdminPageController {
         }
         Pageable pageable = PageRequest.of(pageNum - 1, 4);
 
-        if (StringUtils.hasText(name)) {
+        if (name!=null || !name.isEmpty()) {
             customerPage = customerService.findCustomersByNameAndRoleId(name, 2L, pageable);
+            if(customerPage.isEmpty()) {
+                customerPage = customerService.findCustomersByRoleId(id, pageable);
+            }
         } else {
-            customerPage = customerService.findCustomersById(2L, pageable);
+            customerPage = customerService.findCustomersByRoleId(id, pageable);
         }
 
         List<Customer> customers = customerPage.getContent();
+
+        customers.forEach(customer1 -> {
+            String role = customer1.getRole().getRoleName();
+            if(role.equals("ROLE_USER")) {
+                customer1.getRole().setRoleName("Người dùng");
+            }
+        });
 
         model.addAttribute("users", customers);
         model.addAttribute("currentPage", pageNum);
         model.addAttribute("totalPages", customerPage.getTotalPages());
         return "admin/user/show";
     }
-//    @PostMapping("/admin/user")
-//    public String searchCustomerPage(Model model,@ModelAttribute("newUser") Customer customer
-//            ,@RequestParam("page") Optional<String> page) {
-//
-//        List<Customer> cus=this.customerService.getCustomers();
-//        String name = customer.getName();
-//        List<Customer> search = List.of(customer);
-//        Customer customer1 = this.customerService.getCustomerByName(customer.getName());
-//
-//
-//        Page<Customer> customerPage;
-//        int pageNum = 1;
-//        long id=2;
-//        try {
-//            if(page.isPresent()) {
-//                pageNum = Integer.parseInt(page.get());
-//            }
-//        }catch (Exception e) {}
-//        Pageable pageable = PageRequest.of(pageNum-1, 4);
-//
-//        for(Customer c:cus) {
-//            if(c.getName().equals(name) && c.getRole().getRoleId()==2) {
-//                search.add(c);
-//            }
-//        }
-//        if (customer1 != null && customer1.getRole().getRoleId()==2) {
-//            customerPage = (Page<Customer>) search;
-//        } else {
-//            customerPage = this.customerService.findCustomersById(id,pageable);;
-//
-//        }
-//
-//        List<Customer> customers = customerPage.getContent();
-//
-//        model.addAttribute("users", customers);
-//        model.addAttribute("currentPage", pageNum);
-//        model.addAttribute("totalPages", customerPage.getTotalPages());
-//        return "admin/user/show";
-//    }
 
     @GetMapping("/admin/user/{Id}")
     public String getAdminUserViewPage(Model model, @PathVariable("Id") Long id) {
