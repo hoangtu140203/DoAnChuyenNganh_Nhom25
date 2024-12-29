@@ -1,3 +1,5 @@
+<%@ page import="java.util.Date" %>
+<%@ page import="com.gr25.thinkpro.utils.DateUtils" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -25,7 +27,6 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Quản lý đơn hàng</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Bảng điều khiển</a></li>
                     <li class="breadcrumb-item active">Đơn hàng</li>
                 </ol>
                 <div class="mt-5">
@@ -39,10 +40,11 @@
                             <table class=" table table-bordered table-hover">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Mã đơn</th>
                                     <th>Tổng tiền</th>
-                                    <th>Người dùng</th>
-                                    <th>trạng thái</th>
+                                    <th>Ngày đặt hàng</th>
+                                    <th>Người nhận</th>
+                                    <th>Trạng thái</th>
                                     <th>Hành động</th>
                                 </tr>
                                 </thead>
@@ -54,15 +56,35 @@
                                             <fmt:formatNumber type="number"
                                                               value="${order.total}" /> đ
                                         </td>
-                                        <td>${order.customer.name}</td>
-                                        <td>${order.status}</td>
+                                        <td>
+
+                                            <fmt:formatDate value="${order.getCreatedAt()}" pattern="yyyy-MM-dd HH:mm:ss" />
+                                        </td>
+                                        <td>${order.receiverName}</td>
+                                        <td>
+                                            <c:if test="${order.status == 'PENDING'}">
+                                               Đang giao hàng
+                                            </c:if>
+                                            <c:if test="${order.status == 'WAITING'}">
+                                                Chờ xác nhận
+                                            </c:if>
+                                            <c:if test="${order.status == 'CONFIRMED'}">
+                                                Đã xác nhận
+                                            </c:if>
+                                            <c:if test="${order.status == 'COMPLETED'}">
+                                                Giao hàng thành công
+                                            </c:if>
+                                            <c:if test="${order.status == 'CANCELLED'}">
+                                                Đã hủy
+                                            </c:if>
+                                            <c:if test="${order.status == 'REJECTED'}">
+                                                Từ chối
+                                            </c:if>
+                                        </td>
                                         <td>
                                             <a href="/admin/order/${order.billId}"
-                                               class="btn btn-success">Xem</a>
-                                            <a href="/admin/order/update/${order.billId}"
-                                               class="btn btn-warning  mx-2">Cập nhật</a>
-                                            <a href="/admin/order/delete/${order.billId}"
-                                               class="btn btn-danger">Xóa</a>
+                                               class="btn btn-success">Chi tiết</a>
+
                                         </td>
                                     </tr>
 

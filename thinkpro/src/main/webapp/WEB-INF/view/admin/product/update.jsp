@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,21 +14,7 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        $(document).ready(() => {
-            const avatarFile = $("#avatarFile");
-            const orgImage = "${newProduct.image}";
-            if (orgImage) {
-                const urlImage = "/images/product/" + orgImage;
-                $("#avatarPreview").attr("src", urlImage);
-                $("#avatarPreview").css({ "display": "block" });
-            }
 
-            avatarFile.change(function (e) {
-                const imgURL = URL.createObjectURL(e.target.files[0]);
-                $("#avatarPreview").attr("src", imgURL);
-                $("#avatarPreview").css({ "display": "block" });
-            });
-        });
     </script>
 </head>
 <body class="sb-nav-fixed">
@@ -37,19 +24,18 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Products</h1>
+                <h1 class="mt-4">Quản lý sản phẩm</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/product">Product</a></li>
-                    <li class="breadcrumb-item active">Update</li>
+                    <li class="breadcrumb-item"><a href="/admin/product">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">Cập nhật</li>
                 </ol>
                 <div class=" mt-5">
                     <div class="row">
                         <div class="col-md-6 col-12 mx-auto">
-                            <h3>Update a product</h3>
+                            <h3>Cập nhật sản phẩm</h3>
                             <hr />
-                            <form:form class="form" action="/admin/product/update" method="post" modelAttribute="newProduct" enctype="multipart/form-data">
-                                <!-- Các trường nhập thông tin sản phẩm -->
+                            <form:form class="form" action="/admin/product/update/${newProduct.productId}" method="post" modelAttribute="newProduct" enctype="multipart/form-data">
+
                                 <div class="form-group">
                                     <label for="name">Tên sản phẩm</label>
                                     <form:input id="name" path="name" class="form-control" placeholder="Tên sản phẩm" />
@@ -74,12 +60,28 @@
                                     <label for="description">Mô tả</label>
                                     <form:textarea id="description" path="description" class="form-control" placeholder="Mô tả sản phẩm"></form:textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label>Danh mục</label>
+                                    <form:select class="form-control" path="category.name" placeholder="Danh mục">
+                                        <c:forEach var="Cate" items="${categories}">
+                                            <form:option value="${Cate.name}">
+                                                ${Cate.name}
+                                            </form:option>
+                                        </c:forEach>
+                                    </form:select>
 
+                                </div>
 
-                                <div class="mb-3 col-12 col-md-6">
-                                    <label for="avatarFile" class="form-label">Image:</label>
-                                    <input class="form-control" type="file" id="avatarFile"
-                                           accept=".png, .jpg, .jpeg" name="hoidanitFile" />
+                                <div class="form-floating mb-3">
+
+                                    <c:forEach var="imageIndex" begin="0" end="2">
+                                        <input type="file" name="imageFiles" accept="image/*" class="form-control mb-2"/> <!-- Đây là trường nhập hình ảnh -->
+                                    </c:forEach>
+                                    <c:if test="${not empty errorImage}">
+                                        <div class="mt-1 text-danger align-content-center">
+                                            <span class="">${errorImage}</span>
+                                        </div>
+                                    </c:if>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Cập nhật sản phẩm</button>

@@ -29,7 +29,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("SELECT p FROM Product p WHERE p.productId=?1")
     Optional<Product> findByProductId(Long id);
     @Override
-  
+
+    @Query(value = "SELECT p.* FROM products p WHERE p.is_deleted = false",nativeQuery = true)
     List<Product> findAll();
 
     Product findProductByProductId(long productId);
@@ -57,7 +58,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Query("SELECT COUNT(p) FROM Product p WHERE FUNCTION('MONTH', p.createdDate) = :month AND FUNCTION('YEAR', p.createdDate) = :year")
     int countProductsByMonthAndYear(@Param("month") int month, @Param("year") int year);
-
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE products c set c.is_deleted = true WHERE  c.product_id = ?1",nativeQuery = true)
+    void deleteProduct(long id);
 
     @Query(value = """
         SELECT 

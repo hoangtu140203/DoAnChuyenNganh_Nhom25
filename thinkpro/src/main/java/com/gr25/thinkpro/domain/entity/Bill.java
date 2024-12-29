@@ -2,6 +2,7 @@ package com.gr25.thinkpro.domain.entity;
 
 import com.gr25.thinkpro.domain.BillStatus;
 import com.gr25.thinkpro.domain.entity.common.DateAuditing;
+import com.gr25.thinkpro.utils.DateUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -48,5 +50,8 @@ public class Bill extends DateAuditing implements Serializable {
 
     private String receiverPhone;
 
+    public Date getCreatedAt() {
+        return DateUtils.toDate(this.getCreatedDate());
+    }
 
 }

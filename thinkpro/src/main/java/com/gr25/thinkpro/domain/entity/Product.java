@@ -25,17 +25,24 @@ public class Product extends DateAuditing implements Serializable {
     @Column(name = "product_id")
     private long productId;
 
+    @NotNull(message = "Tên sản phẩm không được để trống")
     private String name;
 
+    @Min(value = 0, message = "Số lượng phải lớn hơn 0")
     private long quantity;
 
+    @NotNull(message = "Tên sản phẩm không được để trống")
     private String description;
 
+    @Min(value = 0, message = "Giá phải lớn hơn 0")
     private long price;
 
+    @Min(value = 0, message = "Giảm giá phải lớn hơn hoặc bằng 0")
     private double discount;
 
     private long finalPrice;
+
+    private boolean isDeleted = false;
 
     @OneToMany(mappedBy = "product")
     List<CartDetail> cartDetails;
@@ -43,7 +50,7 @@ public class Product extends DateAuditing implements Serializable {
     @OneToMany(mappedBy = "product")
     List<BillDetail> billDetails;
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     List<Image> images;
 
     @ManyToOne
@@ -53,8 +60,11 @@ public class Product extends DateAuditing implements Serializable {
     @OneToMany(mappedBy = "product")
     List<FeedBack> feedBacks;
 
-    public void setFinalPrice(){
-        this.finalPrice = (long) (this.price-this.price*this.discount);
+    public void setFinalPrice() {
+        if (discount < 0) {
+            throw new IllegalArgumentException("Discount cannot be negative");
+        }
+        this.finalPrice = (long) (this.price - (this.price * this.discount));
     }
 
 

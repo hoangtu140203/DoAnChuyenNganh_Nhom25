@@ -40,7 +40,11 @@
 
                 <a class="nav-link" href="/admin/order">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                    Giao hàng
+                    Đơn hàng
+                </a>
+                <a class="nav-link" href="/admin/confirm-order">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    Xác nhận đơn hàng
                 </a>
             </div>
         </div>

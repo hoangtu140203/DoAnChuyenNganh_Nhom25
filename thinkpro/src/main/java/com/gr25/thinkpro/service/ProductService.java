@@ -66,6 +66,7 @@ public class ProductService  {
                     Join<Object, Object> joinCategory = root.join("category", JoinType.INNER);
                     predicates.add(criteriaBuilder.equal(joinCategory.get("name"), productCriteriaDto.getCategory()));
                 }
+                predicates.add(criteriaBuilder.equal(root.get("isDeleted"), Boolean.FALSE));
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             }
         }, pageable);
@@ -105,7 +106,7 @@ public class ProductService  {
     }
 
     public void deleteProduct(long id) {
-        productRepository.deleteProductByProductId(id);
+        productRepository.deleteProduct(id);
     }
 
 

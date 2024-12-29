@@ -24,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+
     private final CustomUserDetailsService userDetailsService;
     private final CustomSuccessHandler successHandler;
 
@@ -44,9 +45,9 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .dispatcherTypeMatchers(DispatcherType.FORWARD,
-                                DispatcherType.INCLUDE)
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE)
                         .permitAll()
+                        .requestMatchers("/admin/product/create").permitAll()  // Thêm dòng này vào đầu
                         .requestMatchers("/", "/client/**", "/css/**", "/js/**", "/images/**", "/login", "/register"
                                 , "/error/**","/session-expired","/home","/product/**","/forget/**",
                                 "/top-products**","/revenue**","/admin/month**","/admin/day**","/admin/day**"
@@ -59,17 +60,15 @@ public class SecurityConfiguration {
                         .successHandler(successHandler)
                         .failureUrl("/login?error")
                         .permitAll())
-
                 .logout(logout -> logout
                         .deleteCookies("JSESSIONID").invalidateHttpSession(true)
-                        .logoutSuccessUrl("/")
-                )
+                        .logoutSuccessUrl("/"))
                 .rememberMe(remember -> remember
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(24 * 60 * 60)
                 )
                 .authenticationProvider(authProvider())
-                .sessionManagement((sessionManagement) -> sessionManagement
+                .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .invalidSessionUrl("/logout?expired")
                         .maximumSessions(1)
@@ -78,6 +77,7 @@ public class SecurityConfiguration {
                 );
         return http.build();
     }
+
 
 
 

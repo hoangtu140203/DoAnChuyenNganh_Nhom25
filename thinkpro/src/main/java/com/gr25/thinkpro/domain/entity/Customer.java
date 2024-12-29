@@ -36,6 +36,8 @@ public class Customer extends DateAuditing implements Serializable {
 
     private String phone;
 
+    private boolean isDeleted = false;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dob;
 

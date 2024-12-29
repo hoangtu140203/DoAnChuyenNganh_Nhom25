@@ -30,13 +30,20 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     void deleteCustomerByCustomerId(long customerId);
 
     Page<Customer> findByNameContaining(String name, Pageable pageable);
-    Page<Customer> findCustomerByRoleRoleId(Long customerId, Pageable pageable);
+
+    @Query(value = "SELECT c.* FROM customers c WHERE c.role_id = ?1 and c.is_deleted = false",countQuery = "SELECT COUNT(*) FROM customers c WHERE c.role_id = ?1 and c.is_deleted = false",nativeQuery = true)
+    Page<Customer> findCustomerByRoleRoleId(Long roleId, Pageable pageable);
+
     Page<Customer> findCustomersByNameAndRoleRoleId(String name, Long customerId, Pageable pageable);
 
     Customer save(Customer customer);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
 
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE customers c set c.is_deleted = true WHERE  c.customer_id = ?1",nativeQuery = true)
+    void deleteCustomer(long id);
 
     @Query("SELECT COUNT(c) FROM Customer c WHERE MONTH(c.createdDate) = :month AND YEAR(c.createdDate) = :year")
     int countCustomersByMonthAndYear(@Param("month") int month, @Param("year") int year);
