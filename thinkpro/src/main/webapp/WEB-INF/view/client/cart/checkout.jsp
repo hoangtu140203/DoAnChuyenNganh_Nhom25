@@ -157,15 +157,17 @@
                                                     </div>
                                                     <div class="col-12 form-group mb-3">
                                                         <label>Số điện thoại</label>
-                                                        <input class="form-control"
-                                                               name="receiverPhone"
-                                                               required
-                                                               pattern="^\d{10}$"
-                                                               type="text"
-                                                               title="Số điện thoại không hợp lệ. Vui lòng kiểm tra lại!"
-                                                               inputmode="numeric"
-                                                               id="receiverPhone"
-                                                        />
+                                                        <input class="form-control" id="receiverPhone" name="receiverPhone" type="tel" required>
+                                                        <span id="phoneError" style="color: red; display: none;">Số điện thoại không hợp lệ!</span>
+<%--                                                        <input class="form-control"--%>
+<%--                                                               name="receiverPhone"--%>
+<%--                                                               required--%>
+<%--                                                               pattern="^\d{10}$"--%>
+<%--                                                               type="text"--%>
+<%--                                                               title="Số điện thoại không hợp lệ. Vui lòng kiểm tra lại!"--%>
+<%--                                                               inputmode="numeric"--%>
+<%--                                                               id="receiverPhone"--%>
+<%--                                                        />--%>
                                                     </div>
                                                     <div class="mt-4">
                                                         <i class="fas fa-arrow-left"></i>
@@ -312,10 +314,23 @@
                                         icon: 'error'
                                     })
                                 }
+                            }
+                        });
+                        document.getElementById("formSubmit").addEventListener("submit", function (event) {
+                            event.preventDefault();
+                            const phoneInput = document.getElementById("receiverPhone");
+                            const phoneError = document.getElementById("phoneError");
+                            const phoneRegex = /^[0-9]{10}$/; // Ví dụ: kiểm tra số điện thoại 10 chữ số
+
+                            if (!phoneRegex.test(phoneInput.value)) {
+                                // Nếu số điện thoại không hợp lệ
+                                phoneError.style.display = "block"; // Hiển thị lỗi
+                                phoneError.textContent = "Vui lòng nhập số điện thoại hợp lệ.";
+                                phoneInput.focus(); // Đưa con trỏ đến ô số điện thoại
                             } else {
+                                phoneError.style.display = "none"; // Ẩn thông báo lỗi nếu hợp lệ
                                 event.target.submit();
                             }
-
                         });
                     </script>
                     <script>
