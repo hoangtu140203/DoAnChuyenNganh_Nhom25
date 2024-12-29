@@ -15,4 +15,7 @@ public class ImageService {
     public Image saveImage(Image image) {
         return imageRepository.save(image);
     }
+    public void deleteImage(long id) {
+        imageRepository.deleteByProductId(id);
+    }
 }

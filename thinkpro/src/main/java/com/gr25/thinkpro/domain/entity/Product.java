@@ -37,13 +37,15 @@ public class Product extends DateAuditing implements Serializable {
 
     private long finalPrice;
 
+    private boolean isDeleted = false;
+
     @OneToMany(mappedBy = "product")
     List<CartDetail> cartDetails;
 
     @OneToMany(mappedBy = "product")
     List<BillDetail> billDetails;
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     List<Image> images;
 
     @ManyToOne

@@ -110,7 +110,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
                 long sum = 30000;
                 for (CartDetail cd : cartDetails) {
-                    sum += cd.getProduct().getPrice();
+                    sum += cd.getProduct().getPrice()+cd.getQuantity();
                 }
                 order.setTotal(sum);
                 order = billRepository.save(order);
@@ -149,7 +149,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                     cartDetailRepository.deleteById(cd.getId());
                 }
 
-                cartRepository.deleteById(cart.getCartId());
+           //     cartRepository.deleteById(cart.getCartId());
 
                 // step 3 : update session
                 session.setAttribute("sum", 0);

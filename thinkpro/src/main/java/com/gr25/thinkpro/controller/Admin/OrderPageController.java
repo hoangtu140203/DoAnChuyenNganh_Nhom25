@@ -1,4 +1,5 @@
 package com.gr25.thinkpro.controller.Admin;
+import com.gr25.thinkpro.domain.dto.request.UpdateBillRequestDto;
 import com.gr25.thinkpro.domain.entity.Bill;
 import com.gr25.thinkpro.domain.entity.Category;
 import com.gr25.thinkpro.domain.entity.FeedBack;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -51,6 +53,30 @@ public class OrderPageController {
         model.addAttribute("totalPages", ordersPage.getTotalPages());
         return "admin/order/show";
     }
+    @GetMapping("/admin/confirm-order")
+    public String getOrdersToConfirm(Model model,
+                               @RequestParam("page") Optional<String> pageOptional) {
+
+        int page = 1;
+        try {
+            if (pageOptional.isPresent()) {
+                // convert from String to int
+                page = Integer.parseInt(pageOptional.get());
+            }
+        } catch (Exception e) {
+            // page = 1
+            // TODO: handle exception
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, 8);
+        Page<Bill> ordersPage = this.orderService.findAllBillToConfirm(pageable);
+        List<Bill> orders = ordersPage.getContent();
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", ordersPage.getTotalPages());
+        return "admin/order/show";
+    }
     @GetMapping("/admin/order/{billId}")
     public String detailOrderPage(@PathVariable("billId") long Id, Model model) {
         Bill order = this.orderService.getBillById(Id);
@@ -82,6 +108,12 @@ public class OrderPageController {
     public String handleUpdateOrder(@ModelAttribute("newBill") Bill order) {
         this.orderService.updateBill(order);
         return "redirect:/admin/order";
+    }
 
+    @PostMapping("/admin/update-bill-status")
+    @ResponseBody
+    public ResponseEntity<?> updateBillStatus(@RequestBody UpdateBillRequestDto requestDto){
+        orderService.updateBillStatus(requestDto.getStatus(), requestDto.getBillId());
+        return ResponseEntity.ok("Update successfully");
     }
 }

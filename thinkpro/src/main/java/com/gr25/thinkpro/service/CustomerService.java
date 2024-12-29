@@ -60,7 +60,7 @@ public class CustomerService {
 
     public void deleteCustomerById(long id) {
         this.cartRepository.deleteByCustomerId(id);
-        this.customerRepository.deleteCustomerByCustomerId(id);
+        this.customerRepository.deleteCustomer(id);
     }
 
     public Customer getCurrentCustomer() {

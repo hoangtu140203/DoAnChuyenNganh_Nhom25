@@ -1,13 +1,12 @@
-package com.gr25.thinkpro.controller.client;
+package com.gr25.thinkpro.controller.Admin;
 
 import com.gr25.thinkpro.domain.entity.Category;
-import com.gr25.thinkpro.domain.entity.Customer;
 import com.gr25.thinkpro.domain.entity.Image;
 import com.gr25.thinkpro.domain.entity.Product;
 import com.gr25.thinkpro.service.CategoryService;
-import com.gr25.thinkpro.service.CustomerService;
 import com.gr25.thinkpro.service.ImageService;
 import com.gr25.thinkpro.service.ProductService;
+import com.gr25.thinkpro.service.UploadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -32,7 +31,7 @@ public class ProductPageController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final ImageService imageService;
-
+    private final UploadService uploadService;
     @GetMapping("/admin/product")
     public String getProductPage(Model model) {
         List<Product> products = this.productService.getProducts();
@@ -85,17 +84,22 @@ public class ProductPageController {
         product.setLastModifiedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
         product.setCategory(categoryName);
         productService.saveProduct(product);
-
+        List<Image> images = new ArrayList<>();
 
 
         for (MultipartFile file : imageFiles) {
             if (!file.isEmpty()) {
                 Image image = new Image();
-                image.setName(file.getOriginalFilename());
-                // Lưu ảnh vào cơ sở dữ liệu hoặc thư mục
+                images.add(image);
+                String url = this.uploadService.handleSaveUploadFile(file, "products");
+                image.setUrl(url);
+                image.setProduct(product);
                 imageService.saveImage(image);
             }
         }
+        product.setImages(images);
+        productService.saveProduct(product);
+
 
         return "redirect:/admin/product";
     }
@@ -110,6 +114,58 @@ public class ProductPageController {
     @PostMapping("/admin/product/delete")
     public String postdeleteProductPage(Model model,@ModelAttribute("newProduct") Product product) {
         this.productService.deleteProduct(product.getProductId());
+        return "redirect:/admin/product";
+    }
+    @GetMapping("/admin/product/update/{id}")
+    public String getUpdateProductPage(Model model, @PathVariable long id) {
+        Product currentProduct = this.productService.findProductById(id);
+        model.addAttribute("newProduct",currentProduct);
+        model.addAttribute("id", currentProduct.getProductId());
+        List<Category> categories = this.categoryService.getCategories();
+        model.addAttribute("categories", categories);
+        return "admin/product/update";
+    }
+    @PostMapping("/admin/product/update/{id}")
+    public String handleUpdateProduct(Model model, @ModelAttribute("newProduct") @Valid Product pr, @PathVariable("id") long id,
+                                      BindingResult newProductBindingResult,
+                                      @RequestParam("imageFiles") List<MultipartFile> imageFiles) {
+
+        Category categoryName = categoryService.getCategoryByName(pr.getCategory().getName());
+
+        List<Category> categories = this.categoryService.getCategories();
+        model.addAttribute("categories", categories);
+        if (newProductBindingResult.hasErrors()) {
+            return "admin/product/update";
+        }
+        List<Image> images=new ArrayList<>();
+
+        Product currentProduct = this.productService.findProductById(id);
+        if (currentProduct != null) {
+            // update new image
+
+            currentProduct.setName(pr.getName());
+            currentProduct.setPrice(pr.getPrice());
+            currentProduct.setQuantity(pr.getQuantity());
+            currentProduct.setDiscount(pr.getDiscount());
+            currentProduct.setDescription(pr.getDescription());
+            currentProduct.setCategory(categoryName);
+            for(Image tmp : currentProduct.getImages()) {
+                imageService.deleteImage(tmp.getProduct().getProductId());
+            }
+            for (MultipartFile file : imageFiles) {
+                if (!file.isEmpty()) {
+                    Image image = new Image();
+                    images.add(image);
+                    String url = this.uploadService.handleSaveUploadFile(file, "products");
+                    image.setUrl(url);
+                    image.setProduct(currentProduct);
+                    imageService.saveImage(image);
+                }
+            }
+            currentProduct.setImages(images);
+            this.productService.saveProduct(currentProduct);
+        }
+
         return "redirect:/admin/product";
     }
 

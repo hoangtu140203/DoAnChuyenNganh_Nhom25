@@ -123,6 +123,9 @@
                             <c:if test="${order.status == 'CANCELLED'}">
                                 Đơn hàng đã bị hủy
                             </c:if>
+                            <c:if test="${order.status == 'REJECTED'}">
+                                Đơn hàng đã bị từ chối
+                            </c:if>
                         </td>
                         <td colspan="1">
                             <c:if test="${order.status == 'WAITING'}">

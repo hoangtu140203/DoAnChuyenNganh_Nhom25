@@ -24,7 +24,7 @@ function sendMessage() {
         const waitingMessage = document.createElement('div');
         waitingMessage.classList.add('chat-message', 'bot');
         const waitingText = document.createElement('p');
-        waitingText.textContent = 'Chờ xíu...';
+        waitingText.textContent = 'Wating...';
         waitingMessage.appendChild(waitingText);
         chatBody.appendChild(waitingMessage);
         chatBody.scrollTop = chatBody.scrollHeight;

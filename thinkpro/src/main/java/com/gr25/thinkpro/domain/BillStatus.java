@@ -6,5 +6,5 @@ public enum BillStatus {
     PENDING,
     COMPLETED,
     CANCELLED,
-    SHIPPING,
+    REJECTED
 }

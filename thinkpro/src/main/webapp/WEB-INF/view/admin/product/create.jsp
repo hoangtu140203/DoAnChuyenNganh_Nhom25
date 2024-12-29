@@ -74,9 +74,10 @@
                                     </c:if>
                                     <label>Số lượng</label>
                                 </div>
+                                <label class="form-label mb-3">Chọn hình ảnh</label>
                                 <div class="form-floating mb-3">
-                                    <label class="form-label">Chọn hình ảnh</label>
-                                    <c:forEach var="imageIndex" begin="0" end="4"> <!-- Giới hạn số lượng hình ảnh -->
+
+                                    <c:forEach var="imageIndex" begin="0" end="2">
                                         <input type="file" name="imageFiles" accept="image/*" class="form-control mb-2"/> <!-- Đây là trường nhập hình ảnh -->
                                     </c:forEach>
                                     <c:if test="${not empty errorImage}">
