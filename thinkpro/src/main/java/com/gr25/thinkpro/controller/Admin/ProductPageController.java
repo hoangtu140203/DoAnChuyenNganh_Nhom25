@@ -9,20 +9,20 @@ import com.gr25.thinkpro.service.ProductService;
 import com.gr25.thinkpro.service.UploadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -32,6 +32,7 @@ public class ProductPageController {
     private final CategoryService categoryService;
     private final ImageService imageService;
     private final UploadService uploadService;
+
     @GetMapping("/admin/product")
     public String getProductPage(Model model) {
         List<Product> products = this.productService.getProducts();
@@ -140,7 +141,7 @@ public class ProductPageController {
         }
 
         // Cập nhật giá cuối cùng của sản phẩm
-        product.setFinalPrice();
+        product.setFinalPrice((long) (product.getPrice() - product.getPrice() * product.getDiscount() / 100));
         product.setImages(images);
         productService.saveProduct(product); // Lưu lại sản phẩm với hình ảnh
 
@@ -156,61 +157,132 @@ public class ProductPageController {
 
     @Transactional
     @PostMapping("/admin/product/delete")
-    public String postdeleteProductPage(Model model,@ModelAttribute("newProduct") Product product) {
+    public String postdeleteProductPage(Model model, @ModelAttribute("newProduct") Product product) {
         this.productService.deleteProduct(product.getProductId());
         return "redirect:/admin/product";
     }
     @GetMapping("/admin/product/update/{id}")
     public String getUpdateProductPage(Model model, @PathVariable long id) {
         Product currentProduct = this.productService.findProductById(id);
-        model.addAttribute("newProduct",currentProduct);
+        model.addAttribute("newProduct", currentProduct);
         model.addAttribute("id", currentProduct.getProductId());
         List<Category> categories = this.categoryService.getCategories();
         model.addAttribute("categories", categories);
         return "admin/product/update";
     }
-    @PostMapping("/admin/product/update/{id}")
-    public String handleUpdateProduct(Model model, @ModelAttribute("newProduct") @Valid Product pr, @PathVariable("id") long id,
-                                      BindingResult newProductBindingResult,
-                                      @RequestParam("imageFiles") List<MultipartFile> imageFiles) {
 
-        Category categoryName = categoryService.getCategoryByName(pr.getCategory().getName());
+    @PostMapping("/admin/product/update/{id}")
+    public String handleUpdateProduct(Model model, @ModelAttribute("newProduct") @Valid Product product, @PathVariable("id") long id,
+                                      BindingResult newProductBindingResult,
+                                      @RequestParam("imageFiles") List<MultipartFile> imageFiles,
+                                      RedirectAttributes redirectAttributes) {
+        boolean hasError = false;
+
+        // Kiểm tra các trường dữ liệu
+        if (product.getName() == null || product.getName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorName", "Tên sản phẩm không được để trống");
+            hasError = true;
+        }
+        if (product.getDescription() == null || product.getDescription().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorDescription", "Mô tả không được để trống");
+            hasError = true;
+        }
+        if (product.getPrice() == 0) {
+            redirectAttributes.addFlashAttribute("errorPrice", "Giá sản phẩm không được để trống");
+            hasError = true;
+        } else if (product.getPrice() <= 0) {
+            redirectAttributes.addFlashAttribute("errorPrice", "Giá sản phẩm phải lớn hơn 0");
+            hasError = true;
+        } else {
+            try {
+                Long.parseLong(String.valueOf(product.getPrice()));
+            } catch (NumberFormatException e) {
+                redirectAttributes.addFlashAttribute("errorPrice", "Giá sản phẩm phải là số");
+                hasError = true;
+            }
+        }
+
+        if (product.getQuantity() == 0) {
+            redirectAttributes.addFlashAttribute("errorQuantity", "Số lượng sản phẩm không được để trống");
+            hasError = true;
+        } else if (product.getQuantity() <= 0) {
+            redirectAttributes.addFlashAttribute("errorQuantity", "Số lượng sản phẩm phải lớn hơn 0");
+            hasError = true;
+        } else {
+            try {
+                Long.parseLong(String.valueOf(product.getQuantity()));
+            } catch (NumberFormatException e) {
+                redirectAttributes.addFlashAttribute("errorQuantity", "Số lượng sản phẩm phải là số");
+                hasError = true;
+            }
+        }
+
+        if (product.getDiscount() < 0) {
+            redirectAttributes.addFlashAttribute("errorDiscount", "Giảm giá phải lớn hơn hoặc bằng 0");
+            hasError = true;
+        } else {
+            try {
+                Double.parseDouble(String.valueOf(product.getDiscount()));
+            } catch (NumberFormatException e) {
+                redirectAttributes.addFlashAttribute("errorDiscount", "Giảm giá phải là số");
+                hasError = true;
+            }
+        }
+
+        // Nếu có lỗi, trả về lại trang cập nhật với các thông báo lỗi
+        if (hasError) {
+            return "redirect:/admin/product/update/" + id;
+        }
+
+        Category categoryName = categoryService.getCategoryByName(product.getCategory().getName());
 
         List<Category> categories = this.categoryService.getCategories();
         model.addAttribute("categories", categories);
         if (newProductBindingResult.hasErrors()) {
             return "admin/product/update";
         }
-        List<Image> images=new ArrayList<>();
+        List<Image> images = new ArrayList<>();
 
         Product currentProduct = this.productService.findProductById(id);
         if (currentProduct != null) {
             // update new image
 
-            currentProduct.setName(pr.getName());
-            currentProduct.setPrice(pr.getPrice());
-            currentProduct.setQuantity(pr.getQuantity());
-            currentProduct.setDiscount(pr.getDiscount());
-            currentProduct.setDescription(pr.getDescription());
+            currentProduct.setName(product.getName());
+            currentProduct.setPrice(product.getPrice());
+            currentProduct.setQuantity(product.getQuantity());
+            currentProduct.setDiscount(product.getDiscount());
+            currentProduct.setDescription(product.getDescription());
             currentProduct.setCategory(categoryName);
-            for(Image tmp : currentProduct.getImages()) {
-                imageService.deleteImage(tmp.getProduct().getProductId());
+
+            boolean isDelete = false;
+            for (MultipartFile file : imageFiles) {
+                if (!file.isEmpty()) {
+                    isDelete = true;
+                    break;
+                }
+            }
+            if (isDelete) {
+                for (Image tmp : currentProduct.getImages()) {
+                    imageService.deleteImage(tmp.getProduct().getProductId());
+                }
             }
             for (MultipartFile file : imageFiles) {
                 if (!file.isEmpty()) {
                     Image image = new Image();
-                    images.add(image);
                     String url = this.uploadService.handleSaveUploadFile(file, "products");
                     image.setUrl(url);
                     image.setProduct(currentProduct);
                     imageService.saveImage(image);
+                    images.add(image);
                 }
             }
+
             currentProduct.setImages(images);
             this.productService.saveProduct(currentProduct);
         }
 
         return "redirect:/admin/product";
     }
+
 
 }

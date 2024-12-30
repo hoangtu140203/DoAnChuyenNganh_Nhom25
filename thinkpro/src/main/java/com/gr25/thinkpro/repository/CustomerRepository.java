@@ -34,7 +34,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query(value = "SELECT c.* FROM customers c WHERE c.role_id = ?1 and c.is_deleted = false",countQuery = "SELECT COUNT(*) FROM customers c WHERE c.role_id = ?1 and c.is_deleted = false",nativeQuery = true)
     Page<Customer> findCustomerByRoleRoleId(Long roleId, Pageable pageable);
 
-    Page<Customer> findCustomersByNameAndRoleRoleId(String name, Long customerId, Pageable pageable);
+
+    Page<Customer> findCustomersByNameAndRoleRoleId(@Param("name") String name, @Param("roleId") Long roleId, Pageable pageable);
 
     Customer save(Customer customer);
     boolean existsByEmail(String email);

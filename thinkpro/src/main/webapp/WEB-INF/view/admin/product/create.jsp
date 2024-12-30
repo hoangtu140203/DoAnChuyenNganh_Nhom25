@@ -52,7 +52,7 @@
                                     <label>Mô tả</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <form:input class="form-control" path="price" placeholder="Giá"/>
+                                    <form:input class="form-control" path="price" type="number"  placeholder="Giá"/>
                                     <c:if test="${not empty errorPrice}">
                                         <div class="mt-1 text-danger align-content-center">
                                             <span class="">${errorPrice}</span>
@@ -61,7 +61,7 @@
                                     <label>Giá</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <form:input class="form-control" path="discount" placeholder="Giảm giá"/>
+                                    <form:input class="form-control" path="discount" type="number" step="0.01" placeholder="Giảm giá"/>
                                     <c:if test="${not empty errorDiscount}">
                                         <div class="mt-1 text-danger align-content-center">
                                             <span class="">${errorDiscount}</span>
@@ -70,7 +70,7 @@
                                     <label>Giảm giá</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <form:input class="form-control" path="quantity" placeholder="Số lượng"/>
+                                    <form:input class="form-control" path="quantity"  type="number"  placeholder="Số lượng"/>
                                     <c:if test="${not empty errorQuantity}">
                                         <div class="mt-1 text-danger align-content-center">
                                             <span class="">${errorQuantity}</span>

@@ -125,7 +125,7 @@ public class ProductService  {
         existingProduct.setDescription(product.getDescription());
         existingProduct.setPrice(product.getPrice());
         existingProduct.setDiscount(product.getDiscount());
-        existingProduct.setFinalPrice(); // Tính lại giá cuối cùng sau khi cập nhật
+        existingProduct.setFinalPrice((long) (product.getPrice()-product.getPrice()*product.getDiscount()/100));
 
         // Cập nhật các thông tin khác nếu cần
         productRepository.save(existingProduct);  // Lưu lại vào DB

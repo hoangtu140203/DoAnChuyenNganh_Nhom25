@@ -60,12 +60,6 @@ public class Product extends DateAuditing implements Serializable {
     @OneToMany(mappedBy = "product")
     List<FeedBack> feedBacks;
 
-    public void setFinalPrice() {
-        if (discount < 0) {
-            throw new IllegalArgumentException("Discount cannot be negative");
-        }
-        this.finalPrice = (long) (this.price - (this.price * this.discount));
-    }
 
 
 

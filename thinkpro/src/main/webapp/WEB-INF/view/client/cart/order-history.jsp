@@ -86,8 +86,10 @@
                     <th scope="col">Giá cả</th>
                     <th scope="col">Số lượng</th>
                     <th scope="col">Thành tiền</th>
-                    <th scope="col">Trạng thái</th>
+
                     <th scope="col">Hành động</th>
+                    <th scope="col"></th>
+                    <th scope="col">Trạng thái</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -176,9 +178,7 @@
                                                       value="${orderDetail.price * orderDetail.quantity}"/> đ
                                 </p>
                             </td>
-                            <td>
 
-                            </td>
                             <td class="pt-4">
                                 <c:if test="${order.status == 'COMPLETED' && orderDetail.feedback == false }">
                                     <a style="padding: 5px 0; width: 100px; " class="btn btn-primary text-white    "
