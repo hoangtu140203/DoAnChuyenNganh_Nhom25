@@ -37,6 +37,13 @@
                             </div>
 
                             <hr />
+                            <c:if test="${ empty orders}">
+                                <tr>
+                                    <td colspan="6">
+                                        Không có đơn hàng nào
+                                    </td>
+                                </tr>
+                            </c:if>
                             <table class=" table table-bordered table-hover">
                                 <thead>
                                 <tr>
@@ -92,6 +99,7 @@
 
                                 </tbody>
                             </table>
+                            <c:if test="${totalPages > 0}">
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-center">
                                     <li class="page-item">
@@ -118,6 +126,7 @@
                                     </li>
                                 </ul>
                             </nav>
+                            </c:if>
                         </div>
 
                     </div>
