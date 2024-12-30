@@ -68,6 +68,7 @@ public class ProductPageController {
         log.info("Received product: {}", product);
         log.info("Received images: {}", imageFiles);
 
+
         Category categoryName = categoryService.getCategoryByName(product.getCategory().getName());
         List<Category> categories = this.categoryService.getCategories();
         model.addAttribute("categories", categories);
@@ -128,10 +129,12 @@ public class ProductPageController {
         for (MultipartFile file : imageFiles) {
             if (!file.isEmpty()) {
                 Image image = new Image();
+
                 String url = this.uploadService.handleSaveUploadFile(file, "products");
                 image.setUrl(url);
                 image.setProduct(product);
                 imageService.saveImage(image);
+
                 images.add(image);
             }
         }
@@ -143,7 +146,6 @@ public class ProductPageController {
 
         return "redirect:/admin/product"; // Redirect đến trang danh sách sản phẩm
     }
-
 
     @GetMapping("/admin/product/delete/{id}")
     public String getdeleteProductPage(Model model, @PathVariable("id") long id) {
