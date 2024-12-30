@@ -44,6 +44,9 @@
                                     </td>
                                 </tr>
                             </c:if>
+                            <c:if test="${ not empty orders}">
+
+
                             <table class=" table table-bordered table-hover">
                                 <thead>
                                 <tr>
@@ -126,6 +129,7 @@
                                     </li>
                                 </ul>
                             </nav>
+                            </c:if>
                             </c:if>
                         </div>
 
