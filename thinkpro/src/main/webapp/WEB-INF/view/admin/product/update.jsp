@@ -24,16 +24,15 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Products</h1>
+                <h1 class="mt-4">Quản lý sản phẩm</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/product">Product</a></li>
-                    <li class="breadcrumb-item active">Update</li>
+                    <li class="breadcrumb-item"><a href="/admin/product">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">Cập nhật</li>
                 </ol>
                 <div class=" mt-5">
                     <div class="row">
                         <div class="col-md-6 col-12 mx-auto">
-                            <h3>Update a product</h3>
+                            <h3>Cập nhật sản phẩm</h3>
                             <hr />
                             <form:form class="form" action="/admin/product/update/${newProduct.productId}" method="post" modelAttribute="newProduct" enctype="multipart/form-data">
 

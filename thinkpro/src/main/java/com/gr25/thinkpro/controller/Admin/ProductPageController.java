@@ -67,42 +67,86 @@ public class ProductPageController {
                                 RedirectAttributes redirectAttributes) {
         log.info("Received product: {}", product);
         log.info("Received images: {}", imageFiles);
-        Category categoryName = categoryService.getCategoryByName(product.getCategory().getName());
 
+
+        Category categoryName = categoryService.getCategoryByName(product.getCategory().getName());
         List<Category> categories = this.categoryService.getCategories();
         model.addAttribute("categories", categories);
 
-        this.productService.rqProduct(product,redirectAttributes);
-        if (    redirectAttributes.containsAttribute("errorName") ||
-                redirectAttributes.containsAttribute("errorQuantity") ||
-                redirectAttributes.containsAttribute("errorPrice") ||
-                redirectAttributes.containsAttribute("errorCate")||
-                redirectAttributes.containsAttribute("errorDiscount")) {
-            return "redirect:/admin/product/create";
+        boolean hasError = false; // Biến kiểm tra xem có lỗi hay không
+
+        // Kiểm tra các lỗi và thêm vào RedirectAttributes
+        if (product.getName() == null || product.getName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorName", "Tên sản phẩm không được để trống");
+            hasError = true;
         }
+        if (product.getDescription() == null || product.getDescription().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorDescription", "Mô tả không được để trống");
+            hasError = true;
+        }
+        if (product.getPrice() <= 0) {
+            redirectAttributes.addFlashAttribute("errorPrice", "Giá sản phẩm phải lớn hơn 0");
+            hasError = true;
+        }
+        if (product.getQuantity() <= 0) {
+            redirectAttributes.addFlashAttribute("errorQuantity", "Số lượng sản phẩm phải lớn hơn 0");
+            hasError = true;
+        }
+        if (product.getDiscount() < 0 || product.getDiscount() >= 1) {
+            redirectAttributes.addFlashAttribute("errorDiscount", "Giảm giá không hợp lệ");
+            hasError = true;
+        }
+
+        // Kiểm tra các lỗi từ service, nếu có lỗi, thêm vào RedirectAttributes
+        this.productService.rqProduct(product, redirectAttributes);
+
+        // Kiểm tra số lượng ảnh, nếu không đủ 3 ảnh, thêm thông báo lỗi
+        if (imageFiles.size() != 3) {
+            redirectAttributes.addFlashAttribute("errorImage", "Vui lòng chọn đủ 3 ảnh cho sản phẩm");
+            hasError = true;
+        }
+
+        // Nếu có lỗi, trả về trang tạo sản phẩm với thông báo lỗi
+        if (hasError || redirectAttributes.containsAttribute("errorName") ||
+                redirectAttributes.containsAttribute("errorDescription") ||
+                redirectAttributes.containsAttribute("errorPrice") ||
+                redirectAttributes.containsAttribute("errorQuantity") ||
+                redirectAttributes.containsAttribute("errorDiscount") ||
+                redirectAttributes.containsAttribute("errorImage")) {
+            return "redirect:/admin/product/create"; // Trả về lại trang tạo sản phẩm với các thông báo lỗi
+        }
+
+        // Nếu không có lỗi, tiếp tục lưu sản phẩm
         product.setCreatedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
         product.setLastModifiedDate(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
         product.setCategory(categoryName);
+
+        // Lưu sản phẩm vào cơ sở dữ liệu
         productService.saveProduct(product);
+
+        // Lưu hình ảnh (nếu có)
         List<Image> images = new ArrayList<>();
-
-
         for (MultipartFile file : imageFiles) {
             if (!file.isEmpty()) {
                 Image image = new Image();
-                images.add(image);
+
                 String url = this.uploadService.handleSaveUploadFile(file, "products");
                 image.setUrl(url);
                 image.setProduct(product);
                 imageService.saveImage(image);
+
+                images.add(image);
             }
         }
+
+        // Cập nhật giá cuối cùng của sản phẩm
+        product.setFinalPrice();
         product.setImages(images);
-        productService.saveProduct(product);
+        productService.saveProduct(product); // Lưu lại sản phẩm với hình ảnh
 
-
-        return "redirect:/admin/product";
+        return "redirect:/admin/product"; // Redirect đến trang danh sách sản phẩm
     }
+
     @GetMapping("/admin/product/delete/{id}")
     public String getdeleteProductPage(Model model, @PathVariable("id") long id) {
         model.addAttribute("id", id);

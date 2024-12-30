@@ -44,7 +44,11 @@
                                 </div>
                                 <div class="form-floating mb-3">
                                     <form:input class="form-control" path="description" placeholder="Mô tả"/>
-
+                                    <c:if test="${not empty errorDescription}">
+                                        <div class="mt-1 text-danger align-content-center">
+                                            <span class="">${errorDescription}</span>
+                                        </div>
+                                    </c:if>
                                     <label>Mô tả</label>
                                 </div>
                                 <div class="form-floating mb-3">
@@ -76,7 +80,6 @@
                                 </div>
                                 <label class="form-label mb-3">Chọn hình ảnh</label>
                                 <div class="form-floating mb-3">
-
                                     <c:forEach var="imageIndex" begin="0" end="2">
                                         <input type="file" name="imageFiles" accept="image/*" class="form-control mb-2"/> <!-- Đây là trường nhập hình ảnh -->
                                     </c:forEach>
@@ -86,7 +89,6 @@
                                         </div>
                                     </c:if>
                                 </div>
-
                                 <div class="form-floating mb-3">
                                     <form:select class="form-control" path="category.name" placeholder="Danh mục">
                                         <c:forEach var="Cate" items="${categories}">
