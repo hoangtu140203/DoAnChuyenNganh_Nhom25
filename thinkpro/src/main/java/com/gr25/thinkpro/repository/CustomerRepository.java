@@ -43,7 +43,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE customers c set c.is_deleted = true WHERE  c.customer_id = ?1",nativeQuery = true)
+    @Query(value = "UPDATE customers c set c.is_deleted = true  WHERE  c.customer_id = ?1",nativeQuery = true)
     void deleteCustomer(long id);
 
     @Query("SELECT COUNT(c) FROM Customer c WHERE MONTH(c.createdDate) = :month AND YEAR(c.createdDate) = :year")

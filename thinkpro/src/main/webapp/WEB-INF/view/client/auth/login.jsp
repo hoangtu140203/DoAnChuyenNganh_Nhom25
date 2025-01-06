@@ -60,12 +60,12 @@
                                     <div class="form-floating mb-3">
                                         <input class="form-control" type="email"
                                                placeholder="name@example.com" name="username"/>
-                                        <label>Email address</label>
+                                        <label>Email </label>
                                     </div>
                                     <div class="form-floating mb-3 position-relative">
                                         <input class="form-control" type="password"
                                                placeholder="Password" name="password" id="password"/>
-                                        <label>Password</label>
+                                        <label>Mật khẩu</label>
                                         <span class="eye-icon" id="togglePassword">
                                             <i class="fa fa-eye-slash"></i>
                                         </span>

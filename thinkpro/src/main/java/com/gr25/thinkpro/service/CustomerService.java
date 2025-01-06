@@ -59,8 +59,11 @@ public class CustomerService {
     }
 
     public void deleteCustomerById(long id) {
-        this.cartRepository.deleteByCustomerId(id);
+        Customer c= customerRepository.findCustomerByCustomerId(id);
+        c.setPassword("a");
+        customerRepository.save(c);
         this.customerRepository.deleteCustomer(id);
+
     }
 
     public Customer getCurrentCustomer() {

@@ -148,8 +148,8 @@
                     </div>
                 </div>
                 <div>
-                    <h1>Export PDF</h1>
-                    <button onclick="downloadPdfDay('${date}')">Download PDF</button>
+                    <h1>Xuất PDF</h1>
+                    <button onclick="downloadPdfDay('${date}')">Tải xuống</button>
                 </div>
             </div>
         </main>
@@ -234,7 +234,13 @@
                 dataTableDate.refresh();
             } else {
                 // Initialize the DataTable
-                dataTableMonthDate = new simpleDatatables.DataTable("#datatabledate");
+                dataTableMonthDate = new simpleDatatables.DataTable("#datatabledate", {
+                    labels: {
+                        placeholder: "Tìm kiếm...", // Custom placeholder text
+                        perPage: "Số lượng hiển thị trên một trang", // Customize "entries per page"
+                        info: "Hiển thị {start} đến {end} trong tổng số {rows} mục"
+                    }
+                });
             }
         } catch (error) {
             console.error("Error loading data:", error);

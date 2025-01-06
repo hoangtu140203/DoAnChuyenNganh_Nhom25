@@ -172,8 +172,8 @@
                     </div>
                 </div>
                 <div>
-                    <h1>Export PDF</h1>
-                    <button onclick="downloadPdf()">Download PDF</button>
+                    <h1>Xuất PDF</h1>
+                    <button onclick="downloadPdf()">Tải xuống</button>
                 </div>
             </div>
         </main>
@@ -444,7 +444,13 @@
                 dataTable.refresh();
             } else {
                 // Initialize the DataTable
-                dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+                dataTable = new simpleDatatables.DataTable("#datatablesSimple", {
+                    labels: {
+                        placeholder: "Tìm kiếm...", // Custom placeholder text
+                        perPage: "Số lượng hiển thị trên một trang", // Customize "entries per page"
+                        info: "Hiển thị {start} đến {end} trong tổng số {rows} mục"
+                    }
+                });
             }
         } catch (error) {
             console.error("Error loading data:", error);

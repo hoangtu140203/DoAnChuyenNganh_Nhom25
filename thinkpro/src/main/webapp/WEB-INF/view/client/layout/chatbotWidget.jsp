@@ -6,12 +6,12 @@
         <div class="chat-header" onclick="toggleChat()">💬 Chat Box</div>
         <div class="chat-body" id="chatBody">
             <div class="chat-message bot">
-                <p>Hi, How can I help you?</p>
+                <p>Xin chào, tôi có thể giúp gì cho bạn?</p>
             </div>
         </div>
         <div class="chat-footer">
             <input type="text" id="chatInput" placeholder="Send messsage...">
-            <button onclick="sendMessage()">Send</button>
+            <button onclick="sendMessage()">Gửi</button>
         </div>
     </div>
     <button class="open-chat-btn" onclick="toggleChat()">💬</button>
